@@ -1,6 +1,10 @@
-import React, { useContext, useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useLayoutEffect, useState } from 'react';
+import {
+	NavigationContainer,
+	getFocusedRouteNameFromRoute,
+} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -8,31 +12,51 @@ import AppContext from './AppContext';
 import Home from './Home';
 import Search from './Home/Search';
 import UserProfile from './UserProfile';
+import PostPage from './UserProfile/PostPage';
 
 const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
 
-const HomeStackScreens = () => (
-	<HomeStack.Navigator>
-		<HomeStack.Screen
-			name='Home'
-			component={Home}
-			options={{ headerShown: false }}
-		/>
+const HomeStackScreens = ({
+	navigation,
+	route,
+}: BottomTabScreenProps<{}, 'HomeScreens'>) => {
+	useLayoutEffect(() => {
+		if (getFocusedRouteNameFromRoute(route) !== 'Home') {
+			navigation.setOptions({ tabBarVisible: false });
+		} else {
 
-		<HomeStack.Screen
-			name='UserProfile'
-			options={{ headerTransparent: true, headerTitle: '' }}
-			component={UserProfile}
-		/>
+			navigation.setOptions({ tabBarVisible: true });
+		}
+	}, [navigation, route]);
 
-		<HomeStack.Screen
-			name='Search'
-			options={{ headerTransparent: true, headerTitle: '' }}
-			component={Search}
-		/>
-	</HomeStack.Navigator>
-);
+	return (
+		<HomeStack.Navigator>
+			<HomeStack.Screen
+				name='Home'
+				component={Home}
+				options={{ headerShown: false }}
+			/>
+
+			<HomeStack.Screen
+				name='UserProfile'
+				options={{ headerTransparent: true, headerTitle: '' }}
+				component={UserProfile}
+			/>
+			<HomeStack.Screen
+				name='PostPage'
+				options={{ headerTitle: 'Post' }}
+				component={PostPage}
+			/>
+
+			<HomeStack.Screen
+				name='Search'
+				options={{ headerTransparent: true, headerTitle: '' }}
+				component={Search}
+			/>
+		</HomeStack.Navigator>
+	);
+};
 
 export default function App() {
 	const [friends, setFriends] = useState([

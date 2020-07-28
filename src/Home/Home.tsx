@@ -3,7 +3,6 @@ import { Text, Pressable, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AppContext from '../AppContext';
-import Search from './Search';
 import { PostContent, HomeProps, User } from '../interfaces';
 
 import {
@@ -18,7 +17,6 @@ import {
 } from './styles';
 import { Title, ScreenContainer } from '../styles';
 import Icon from 'react-native-vector-icons/Feather';
-import UserProfile from 'src/UserProfile';
 Icon.loadFont();
 
 const formatPreview = (preview: PostContent) => {
@@ -68,17 +66,16 @@ const Home = ({ navigation }: HomeProps) => {
 	const { friends } = useContext(AppContext);
 
 	return (
-		<SafeAreaView style={{backgroundColor: 'white'}}>
+		<SafeAreaView style={{ backgroundColor: 'white' }}>
 			<ScreenContainer>
 				<Header>
 					<Title>Home</Title>
 					<IconsContainer>
 						<Pressable
-							onPressOut={() => navigation.navigate('Search')}
-							>
-						<Text>
-							<Icon name='search' size={30} />
-						</Text>
+							onPressOut={() => navigation.navigate('Search')}>
+							<Text>
+								<Icon name='search' size={30} />
+							</Text>
 						</Pressable>
 						<Text>
 							<Icon name='settings' size={30} />

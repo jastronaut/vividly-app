@@ -1,4 +1,4 @@
-import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { StackScreenProps } from '@react-navigation/stack';
 
 export interface User {
 	id: string;
@@ -7,7 +7,7 @@ export interface User {
 	profilePicture: string;
 	unreadPosts: number;
 	latestPost: PostPreview;
-	bio: String;
+	bio: string;
 }
 
 export interface PostPreview {
@@ -30,14 +30,22 @@ export interface PostContent {
 }
 
 // routes
-type TabsStackParamList = {
+type HomeStackParamList = {
 	Home: undefined;
 	UserProfile: {
 		user: User;
 		index: number;
-	}
-}
+	};
+	Search: undefined;
+	PostPage: {
+		post: Post;
+		user: User;
+	};
+};
 
-export type UserProfileProps = BottomTabScreenProps<TabsStackParamList, 'UserProfile'>;
-
-export type HomeProps = BottomTabScreenProps<TabsStackParamList, 'Home'>;
+export type UserProfileProps = StackScreenProps<
+	HomeStackParamList,
+	'UserProfile'
+>;
+export type PostPageProps = StackScreenProps<HomeStackParamList, 'PostPage'>;
+export type HomeProps = StackScreenProps<HomeStackParamList, 'Home'>;
