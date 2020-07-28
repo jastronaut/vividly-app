@@ -51,12 +51,18 @@ export const NamesContainer = styled.View`
 	align-items: flex-end;
 `;
 
-export const PostContainer = styled.View`
-	padding: 5% 5%;
+export const PostWrapper = styled.View`
+	padding: 5% 3%;
 	background: white;
 	border-bottom-color: #eee;
 	border-bottom-width: 2px;
 	padding-bottom: 5%;
+`
+
+export const PostContainer = styled.View`
+	padding-bottom: 4%;
+	padding-left: 1%;
+	background: white;
 `;
 
 export const UnreadBannerContainer = styled.View`
@@ -71,3 +77,23 @@ export const UnreadBannerContainer = styled.View`
 export const UnreadBannerText = styled.Text`
 	color: white;
 `;
+
+export const PostInteractionContainer = styled.View`
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
+	width: 100%;
+`;
+
+export const LoadingContainer = styled.View`
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background: black;
+	z-index: 1000;
+	opacity: 0.25;
+	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+`

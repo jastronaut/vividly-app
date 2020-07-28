@@ -1,7 +1,12 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Text, FlatList, Pressable } from 'react-native';
+import { Text, FlatList, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import LikedIcon from './assets/Liked.svg';
+import UnlikedIcon from './assets/Unliked.svg';
+import CommentsIcon from './assets/Comments.svg';
+
+import ScreenLoadingIndicator from './ScreenLoadingIndicator';
 import AppContext from '../AppContext';
 import { User, UserProfileProps, Post } from '../interfaces';
 import {
@@ -14,17 +19,33 @@ import {
 	Username,
 	NamesContainer,
 	PostContainer,
+	PostInteractionContainer,
 	UnreadBannerContainer,
 	UnreadBannerText,
+	PostWrapper,
 } from './styles';
 
-const createProfilePost = ({ item, index }: { item: Post; index: number }) => {
+const createProfilePost = ({ item, index, onPressPost }: { item: Post; index: number, onPressPost: any }) => {
 	return (
-		<PostContainer key={item.id}>
-			{item.content.map((c) => (
-				<Text key={item.id}>{`${index}: ${c.content}`}</Text>
-			))}
-		</PostContainer>
+		<PostWrapper>
+			<Pressable onPressOut={() => onPressPost(item)}>
+				<PostContainer key={item.id}>
+					{item.content.map((c) => (
+						<Text key={item.id}>{`${index}: ${c.content}`}</Text>
+					))}
+				</PostContainer>
+			</Pressable>
+			<PostInteractionContainer>
+				{item.isLikedByCurUser ? (
+					<LikedIcon height='100%' />
+				) : (
+					<UnlikedIcon height='100%' />
+				)}
+				<CommentsIcon height='100%' />
+				<Text>{item.likeCount}</Text>
+				<Text>{`  —  ${item.createdTime}`}</Text>
+			</PostInteractionContainer>
+		</PostWrapper>
 	);
 };
 
@@ -32,6 +53,7 @@ interface UnreadBannerProps {
 	user: User;
 	onPress: () => void;
 }
+
 const UnreadBanner = ({ user, onPress }: UnreadBannerProps) => (
 	<Pressable onPressIn={onPress}>
 		<UnreadBannerContainer>
@@ -51,6 +73,7 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
 		false,
 	);
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+	const [isScreenLoading, setIsScreenLoading] = useState<boolean>(false);
 	const postListRef = useRef(null);
 
 	useEffect(() => {
@@ -297,6 +320,7 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
 	]);
 
 	const onRefresh = () => {
+		setIsScreenLoading(true);
 		const nextUser = findNextUser(index);
 		// markFeedRead(route.params.index);
 		if (nextUser) {
@@ -305,6 +329,8 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
 		} else {
 			console.log('cant find');
 		}
+
+		setTimeout(() => setIsScreenLoading(false), 500);
 	};
 
 	const onPressUnreadBanner = () => {
@@ -316,10 +342,17 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
 		}
 	};
 
+	const onPressPost = ({ post }: { post: Post}) => {
+		navigation.navigate("PostPage", {
+			user, post
+		});
+	}
+
 	return (
 		<>
+			{isScreenLoading ? <ScreenLoadingIndicator /> : null}
 			<SafeAreaView>
-				<HeaderColor></HeaderColor>
+				<HeaderColor />
 				<ScreenContainer>
 					<UserInfoContainer>
 						<ProfilePictureContainer>
@@ -343,14 +376,11 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
 
 					<FlatList<Post>
 						ref={postListRef}
-						style={{ top: -50 }}
 						inverted={true}
 						refreshing={isRefreshing}
 						data={posts}
-						renderItem={createProfilePost}
-						keyExtractor={(post: Post, index: number) =>
-							post.id.toString()
-						}
+						renderItem={({ item, index }: { item: Post; index: number }) => createProfilePost({item, index, onPressPost})}
+						keyExtractor={(post: Post) => post.id.toString()}
 						onRefresh={onRefresh}
 					/>
 				</ScreenContainer>
