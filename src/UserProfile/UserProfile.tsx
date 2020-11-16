@@ -1,71 +1,24 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Text, FlatList, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import LikedIcon from './assets/Liked.svg';
-import UnlikedIcon from './assets/Unliked.svg';
-import CommentsIcon from './assets/Comments.svg';
+import { Text, Image } from 'react-native';
 
+import ProfileContext, { useProvideProfile } from './ProfileContext';
+import FeedContext from '../FeedContext';
+import { AuthContext } from '../hooks/useAuth';
+
+import Header from './Header';
 import ScreenLoadingIndicator from './ScreenLoadingIndicator';
-import AppContext from '../AppContext';
-import { User, UserProfileProps, Post } from '../interfaces';
-import {
-	HeaderColor,
-	ProfilePicture,
-	ProfilePictureContainer,
-	ScreenContainer,
-	UserInfoContainer,
-	Name,
-	Username,
-	NamesContainer,
-	PostContainer,
-	PostInteractionContainer,
-	UnreadBannerContainer,
-	UnreadBannerText,
-	PostWrapper,
-} from './styles';
+import UnreadBanner from './UnreadBanner';
+import PostsList from './PostsList';
+import { FriendUser, Post } from '../types';
+import { UserProfileProps } from '../Routes/interfaces';
+import { ScreenContainer } from './styles';
 
-const createProfilePost = ({ item, index, onPressPost }: { item: Post; index: number, onPressPost: any }) => {
-	return (
-		<PostWrapper>
-			<Pressable onPressOut={() => onPressPost(item)}>
-				<PostContainer key={item.id}>
-					{item.content.map((c) => (
-						<Text key={item.id}>{`${index}: ${c.content}`}</Text>
-					))}
-				</PostContainer>
-			</Pressable>
-			<PostInteractionContainer>
-				{item.isLikedByCurUser ? (
-					<LikedIcon height='100%' />
-				) : (
-					<UnlikedIcon height='100%' />
-				)}
-				<CommentsIcon height='100%' />
-				<Text>{item.likeCount}</Text>
-				<Text>{`  —  ${item.createdTime}`}</Text>
-			</PostInteractionContainer>
-		</PostWrapper>
-	);
-};
-
-interface UnreadBannerProps {
-	user: User;
-	onPress: () => void;
-}
-
-const UnreadBanner = ({ user, onPress }: UnreadBannerProps) => (
-	<Pressable onPressIn={onPress}>
-		<UnreadBannerContainer>
-			<UnreadBannerText>{`${user.unreadPosts} unread post${
-				user.unreadPosts > 1 ? 's' : ''
-			}`}</UnreadBannerText>
-		</UnreadBannerContainer>
-	</Pressable>
-);
-
-const UserProfile = ({ navigation, route }: UserProfileProps) => {
-	const { findNextUser, markFeedRead } = useContext(AppContext);
+const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
+	const { getNextUser } = useContext(FeedContext);
+	const { getUserFeed, posts } = useContext(ProfileContext);
+	const { jwt } = useContext(AuthContext);
 
 	const [user, setUser] = useState(route.params.user);
 	const [index, setIndex] = useState(route.params.index);
@@ -87,305 +40,76 @@ const UserProfile = ({ navigation, route }: UserProfileProps) => {
 	useEffect(() => {
 		setUser(route.params.user);
 		setIndex(route.params.index);
+		getUserFeed(route.params.user.id, jwt);
 	}, [route.params.user, route.params.index]);
-
-	const [posts, setPosts] = useState<Post[]>([
-		{
-			id: 1,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: false,
-		},
-		{
-			id: 2,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 7,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 9,
-			isLikedByCurUser: false,
-		},
-		{
-			id: 3,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-
-		{
-			id: 4,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-
-		{
-			id: 5,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 6,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 7,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 8,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 9,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 10,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 11,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 12,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 13,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 14,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-		{
-			id: 15,
-			content: [
-				{
-					type: 'text',
-					content: 'Hello world',
-				},
-			],
-			updatedTime: 6,
-			likeCount: 5,
-			commentCount: 0,
-			isUnread: true,
-			createdTime: 8,
-			isLikedByCurUser: true,
-		},
-	]);
 
 	const onRefresh = () => {
 		setIsScreenLoading(true);
-		const nextUser = findNextUser(index);
+		const nextUser = getNextUser(index);
 		// markFeedRead(route.params.index);
-		if (nextUser) {
+		if (nextUser && jwt) {
 			setUser(nextUser);
 			setIndex(index + 1);
+			getUserFeed(nextUser.id, jwt);
 		} else {
 			console.log('cant find');
 		}
 
-		setTimeout(() => setIsScreenLoading(false), 500);
+		setIsScreenLoading(false);
 	};
 
 	const onPressUnreadBanner = () => {
-		if (postListRef) {
-			postListRef!.current!.scrollToIndex({
+		if (postListRef && postListRef.current) {
+			postListRef.current.scrollToIndex({
 				index: user.unreadPosts,
 				viewPosition: 1,
 			});
+			setIsUnreadBannerShowing(false);
 		}
 	};
 
-	const onPressPost = ({ post }: { post: Post}) => {
-		navigation.navigate("PostPage", {
-			user, post
+	const onPressPost = (post: Post) => {
+		navigation.navigate('PostPage', {
+			user,
+			post,
 		});
-	}
+	};
 
 	return (
 		<>
 			{isScreenLoading ? <ScreenLoadingIndicator /> : null}
-			<SafeAreaView>
-				<HeaderColor />
-				<ScreenContainer>
-					<UserInfoContainer>
-						<ProfilePictureContainer>
-							<ProfilePicture
-								source={require('../Home/pup.jpeg')}
-							/>
-						</ProfilePictureContainer>
-						<NamesContainer>
-							<Name>{user.name}</Name>
-							<Username>@{user.username}</Username>
-						</NamesContainer>
-						<Text>{user.bio}</Text>
-					</UserInfoContainer>
+			<ScreenContainer>
+				<Header user={user} />
 
-					{isUnreadBannerShowing ? (
-						<UnreadBanner
-							user={user}
-							onPress={onPressUnreadBanner}
-						/>
-					) : null}
+				<UnreadBanner
+					user={user}
+					onPress={onPressUnreadBanner}
+					isShowing={isUnreadBannerShowing}
+				/>
 
-					<FlatList<Post>
-						ref={postListRef}
-						inverted={true}
-						refreshing={isRefreshing}
-						data={posts}
-						renderItem={({ item, index }: { item: Post; index: number }) => createProfilePost({item, index, onPressPost})}
-						keyExtractor={(post: Post) => post.id.toString()}
-						onRefresh={onRefresh}
+				{posts ? (
+					<PostsList
+						onRefreshPage={onRefresh}
+						posts={posts}
+						isRefreshing={isRefreshing}
+						onPressPost={onPressPost}
+						postListRef={postListRef}
 					/>
-				</ScreenContainer>
-			</SafeAreaView>
+				) : (
+					<Text>Wat</Text>
+				)}
+			</ScreenContainer>
 		</>
+	);
+};
+
+const UserProfile = ({ navigation, route }: UserProfileProps) => {
+	const profileValues = useProvideProfile();
+
+	return (
+		<ProfileContext.Provider value={profileValues}>
+			<UserProfileComponent navigation={navigation} route={route} />
+		</ProfileContext.Provider>
 	);
 };
 
