@@ -2,9 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 
 const Search = () => {
-    return (
-        <Text>Hello</Text>
-    );
-}
+	return <Text>Hello</Text>;
+};
 
 export default Search;
