@@ -1,4 +1,4 @@
-import { useState, createContext } from 'react';
+import { useState, createContext, useReducer } from 'react';
 
 import {
 	BaseUser,
@@ -97,7 +97,9 @@ export const useProvideFeed = () => {
 		let newIndex = 0;
 		if (index < 0) newIndex = 0;
 		else newIndex = index + 1;
-		return feed[newIndex].user;
+		const nextUser = feed[newIndex].user;
+		if (nextUser.unreadPosts > 0) return nextUser;
+		return null;
 	};
 
 	return {
