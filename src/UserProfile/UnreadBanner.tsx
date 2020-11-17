@@ -2,10 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { Pressable } from 'react-native';
 
-import { FriendUser } from '../types';
-
 const UnreadBannerContainer = styled.View`
-	/* position: absolute; */
 	width: 100%;
 	display: flex;
 	background-color: red;
@@ -19,21 +16,21 @@ const UnreadBannerText = styled.Text`
 `;
 
 interface UnreadBannerProps {
-	user: FriendUser;
+	numUnreadPosts: number;
 	onPress: () => void;
 	isShowing: boolean;
 }
 
-const UnreadBanner = ({ user, onPress, isShowing }: UnreadBannerProps) =>
+const UnreadBanner = ({
+	numUnreadPosts,
+	onPress,
+	isShowing,
+}: UnreadBannerProps) =>
 	isShowing ? (
-		<Pressable
-			onPress={() => {
-				console.log('pressed');
-				onPress();
-			}}>
+		<Pressable onPress={onPress}>
 			<UnreadBannerContainer>
-				<UnreadBannerText>{`${user.unreadPosts} unread post${
-					user.unreadPosts > 1 ? 's' : ''
+				<UnreadBannerText>{`${numUnreadPosts} unread post${
+					numUnreadPosts > 1 ? 's' : ''
 				}`}</UnreadBannerText>
 			</UnreadBannerContainer>
 		</Pressable>

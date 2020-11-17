@@ -1,10 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-
 import { Text, Image } from 'react-native';
 
-import ProfileContext, { useProvideProfile } from './ProfileContext';
-import FeedContext from '../FeedContext';
+import ProfileProvider, { ProfileContext } from './ProfileProvider';
+import { FeedContext } from '../FeedProvider';
 import { AuthContext } from '../hooks/useAuth';
 
 import Header from './Header';
@@ -16,8 +14,10 @@ import { UserProfileProps } from '../Routes/interfaces';
 import { ScreenContainer } from './styles';
 
 const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
-	const { getNextUser } = useContext(FeedContext);
-	const { getUserFeed, posts } = useContext(ProfileContext);
+	const { feedState, markFeedRead } = useContext(FeedContext);
+	const { feed } = feedState;
+	const { getPosts, state } = useContext(ProfileContext);
+	const { posts, isProfileLoading } = state;
 	const { jwt } = useContext(AuthContext);
 
 	const [user, setUser] = useState(route.params.user);
@@ -25,43 +25,49 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const [isUnreadBannerShowing, setIsUnreadBannerShowing] = useState<boolean>(
 		false,
 	);
+	const [numUnreadPosts, setNumUnreadPosts] = useState<number>(0);
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-	const [isScreenLoading, setIsScreenLoading] = useState<boolean>(false);
 	const postListRef = useRef(null);
 
 	useEffect(() => {
+		const user = route.params.user;
 		if (user.unreadPosts > 0) {
 			setIsUnreadBannerShowing(true);
 		} else {
 			setIsUnreadBannerShowing(false);
 		}
-	}, [user]);
-
-	useEffect(() => {
-		setUser(route.params.user);
+		setNumUnreadPosts(user.unreadPosts);
+		markFeedRead(jwt, user.id);
+		setUser(user);
 		setIndex(route.params.index);
-		getUserFeed(route.params.user.id, jwt);
+		getPosts(jwt, route.params.user.id);
 	}, [route.params.user, route.params.index]);
 
+	const getNextUser = (index: number) => {
+		if (index >= feed.length - 1) return null;
+		let newIndex = 0;
+		if (index < 0) newIndex = 0;
+		else newIndex = index + 1;
+		const nextUser = feed[newIndex].user;
+		if (nextUser.unreadPosts > 0) return nextUser;
+		return null;
+	};
+
 	const onRefresh = () => {
-		setIsScreenLoading(true);
 		const nextUser = getNextUser(index);
-		// markFeedRead(route.params.index);
 		if (nextUser && jwt) {
 			setUser(nextUser);
 			setIndex(index + 1);
-			getUserFeed(nextUser.id, jwt);
+			getPosts(jwt, nextUser.id);
 		} else {
 			console.log('cant find');
 		}
-
-		setIsScreenLoading(false);
 	};
 
 	const onPressUnreadBanner = () => {
 		if (postListRef && postListRef.current) {
-			postListRef.current.scrollToIndex({
-				index: user.unreadPosts,
+			postListRef!.current!.scrollToIndex({
+				index: numUnreadPosts,
 				viewPosition: 1,
 			});
 			setIsUnreadBannerShowing(false);
@@ -77,17 +83,16 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 
 	return (
 		<>
-			{isScreenLoading ? <ScreenLoadingIndicator /> : null}
+			{isProfileLoading ? <ScreenLoadingIndicator /> : null}
 			<ScreenContainer>
 				<Header user={user} />
-
 				<UnreadBanner
-					user={user}
+					numUnreadPosts={numUnreadPosts}
 					onPress={onPressUnreadBanner}
 					isShowing={isUnreadBannerShowing}
 				/>
 
-				{posts ? (
+				{!isProfileLoading && (
 					<PostsList
 						onRefreshPage={onRefresh}
 						posts={posts}
@@ -95,8 +100,6 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 						onPressPost={onPressPost}
 						postListRef={postListRef}
 					/>
-				) : (
-					<Text>Wat</Text>
 				)}
 			</ScreenContainer>
 		</>
@@ -104,12 +107,10 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 };
 
 const UserProfile = ({ navigation, route }: UserProfileProps) => {
-	const profileValues = useProvideProfile();
-
 	return (
-		<ProfileContext.Provider value={profileValues}>
+		<ProfileProvider>
 			<UserProfileComponent navigation={navigation} route={route} />
-		</ProfileContext.Provider>
+		</ProfileProvider>
 	);
 };
 
