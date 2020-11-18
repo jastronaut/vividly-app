@@ -1,15 +1,13 @@
 import React from 'react';
 
-import { useProvideAuth, AuthContext } from './hooks/useAuth';
+import AuthProvider from './AuthProvider';
 
 import Routes from './Routes';
 
 export default function App() {
-	const auth = useProvideAuth();
-
 	return (
-		<AuthContext.Provider value={auth}>
+		<AuthProvider>
 			<Routes />
-		</AuthContext.Provider>
+		</AuthProvider>
 	);
 }

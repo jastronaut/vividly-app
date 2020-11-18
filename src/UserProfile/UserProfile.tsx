@@ -1,9 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Text, Image } from 'react-native';
 
 import ProfileProvider, { ProfileContext } from './ProfileProvider';
 import { FeedContext } from '../FeedProvider';
-import { AuthContext } from '../hooks/useAuth';
+import { AuthContext } from '../AuthProvider';
 
 import Header from './Header';
 import ScreenLoadingIndicator from './ScreenLoadingIndicator';
@@ -18,7 +17,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const { feed } = feedState;
 	const { getPosts, state } = useContext(ProfileContext);
 	const { posts, isProfileLoading } = state;
-	const { jwt } = useContext(AuthContext);
+	const { jwt } = useContext(AuthContext).authState;
 
 	const [user, setUser] = useState(route.params.user);
 	const [index, setIndex] = useState(route.params.index);

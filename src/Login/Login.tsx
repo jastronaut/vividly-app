@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Pressable } from 'react-native';
 
-import { AuthContext } from '../hooks/useAuth';
+import { AuthContext } from '../AuthProvider';
 
 import {
 	LoginContainer,
@@ -31,7 +31,7 @@ const Login = () => {
 
 		setIsLoading(true);
 		try {
-			login(username, password, () => null);
+			login(username, password);
 		} catch (_e) {
 			setErrorMessage(
 				"Couldn't login at this time. Please try again later",

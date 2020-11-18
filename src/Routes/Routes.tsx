@@ -1,33 +1,28 @@
 import React, { useContext } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from '@react-navigation/stack';
-
-import Icon from 'react-native-vector-icons/Feather';
-Icon.loadFont();
-
 import { NavigationContainer } from '@react-navigation/native';
 
 import Login from '../Login';
 import Home from '../Home';
 import Search from '../Home/Search';
 import UserProfile from '../UserProfile';
-import PostPage from '../UserProfile/PostPage';
+import PostPage from '../PostPage';
 import MyPage from '../UserProfile/MyPage';
 import AppSettings from '../AppSettings';
 
-import { AuthContext } from '../hooks/useAuth';
-import FeedContext, { useProvideFeed } from '../FeedContext';
+import { AuthContext } from '../AuthProvider';
+import FeedProvider from '../FeedProvider';
 
 const HomeStack = createStackNavigator();
 
 const Routes = () => {
-	const { authUser, jwt } = useContext(AuthContext);
-	const feed = useProvideFeed();
+	const { authState } = useContext(AuthContext);
 
 	return (
-		<FeedContext.Provider value={feed}>
+		<FeedProvider>
 			<SafeAreaProvider>
-				{authUser && jwt ? (
+				{authState.authUser && authState.jwt ? (
 					<NavigationContainer>
 						<HomeStack.Navigator>
 							<HomeStack.Screen
@@ -69,7 +64,7 @@ const Routes = () => {
 					<Login />
 				)}
 			</SafeAreaProvider>
-		</FeedContext.Provider>
+		</FeedProvider>
 	);
 };
 

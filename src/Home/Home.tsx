@@ -1,13 +1,16 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Text, Pressable, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import AppContext from '../AppContext';
-import { PostContent, HomeProps, User } from '../interfaces';
+import { AuthContext } from '../AuthProvider';
+import { HomeProps } from '../Routes/interfaces';
+import { FeedContext } from '../FeedProvider';
+import { FeedPreview, FriendUser, PostContent } from '../types';
 
+import formatPostTime from '../utils/formatPostTime';
+
+import Header from './Header';
 import {
-	Header,
-	IconsContainer,
 	ProfilePicPreview,
 	FeedList,
 	PostPreviewContainer,
@@ -15,87 +18,105 @@ import {
 	PreviewName,
 	UnreadIndicator,
 } from './styles';
-import { Title, ScreenContainer } from '../styles';
-import Icon from 'react-native-vector-icons/Feather';
-Icon.loadFont();
+import { ScreenContainer } from '../styles';
 
 const formatPreview = (preview: PostContent) => {
-	switch (preview.type) {
+	switch (preview.postType) {
 		case 'text':
 		case 'link':
 			return (
 				preview.content.substring(0, 35) +
 				(preview.content.length > 35 ? '...' : '')
 			);
-			break;
 		case 'image':
 			return 'Image';
-			break;
 		default:
 			return '';
 	}
 };
 
-const renderFriendPreview = (item: User, index: number, navigation: any) => (
-	<Pressable
-		key={item.id}
-		onPress={() => {
-			navigation.navigate('UserProfile', {
-				user: item,
-				index,
-			});
-		}}>
-		{({ pressed }) => (
-			<PostPreviewContainer>
-				<ProfilePicPreview source={require('./pup.jpeg')} />
-				<PreviewRight>
-					<PreviewName>{item.username}</PreviewName>
-					<Text>{formatPreview(item.latestPost.content[0])}</Text>
-				</PreviewRight>
-				{item.unreadPosts ? (
-					<UnreadIndicator>
-						<Text>🟢</Text>
-					</UnreadIndicator>
-				) : null}
-			</PostPreviewContainer>
-		)}
-	</Pressable>
-);
+const renderFriendPreview = (
+	feedPreview: FeedPreview,
+	index: number,
+	onPress: Function,
+) =>
+	feedPreview ? (
+		// TODO: favorites indicator
+		<Pressable
+			key={feedPreview.user.id}
+			onPress={() => onPress(feedPreview.user, index)}>
+			{({ pressed }) => (
+				<PostPreviewContainer>
+					<ProfilePicPreview source={require('./pup.jpg')} />
+					<PreviewRight>
+						<PreviewName>{feedPreview.user.username}</PreviewName>
+						{feedPreview.newestPost ? (
+							<Text>
+								{formatPreview(feedPreview.newestPost.content)}
+							</Text>
+						) : null}
+					</PreviewRight>
+					{feedPreview.user.unreadPosts ? (
+						<UnreadIndicator>
+							<Text>🟢</Text>
+						</UnreadIndicator>
+					) : null}
+					<Text>
+						{feedPreview.newestPost &&
+							formatPostTime(feedPreview.newestPost.createdTime)}
+					</Text>
+				</PostPreviewContainer>
+			)}
+		</Pressable>
+	) : (
+		<Text>No</Text>
+	);
 
 const Home = ({ navigation }: HomeProps) => {
-	const { friends } = useContext(AppContext);
+	const { authState } = useContext(AuthContext);
+	const { feedState, getFeed } = useContext(FeedContext);
+	const { isFeedLoading, feed } = feedState;
+
+	useEffect(() => {
+		getFeed(authState.jwt);
+	}, []);
+
+	const onPressFeedPreview = (user: FriendUser, index: number) => {
+		navigation.navigate('UserProfile', {
+			user,
+			index,
+		});
+	};
 
 	return (
 		<SafeAreaView style={{ backgroundColor: 'white' }}>
 			<ScreenContainer>
-				<Header>
-					<Title>Home</Title>
-					<IconsContainer>
-						<Pressable
-							onPressOut={() => navigation.navigate('Search')}>
-							<Text>
-								<Icon name='search' size={30} />
-							</Text>
-						</Pressable>
-						<Text>
-							<Icon name='settings' size={30} />
-						</Text>
-					</IconsContainer>
-				</Header>
+				<Header navigation={navigation} />
 				<FeedList>
-					<FlatList
-						data={friends}
-						renderItem={({
-							item,
-							index,
-						}: {
-							item: User;
-							index: number;
-						}) => renderFriendPreview(item, index, navigation)}
-						keyExtractor={(item: User, index: number) =>
-							item.id.toString()
-						}
-					/>
+					{isFeedLoading ? (
+						<Text>Loading</Text>
+					) : (
+						<FlatList<FeedPreview>
+							data={feed}
+							renderItem={({
+								item,
+								index,
+							}: {
+								item: FeedPreview;
+								index: number;
+							}) =>
+								renderFriendPreview(
+									item,
+									index,
+									onPressFeedPreview,
+								)
+							}
+							keyExtractor={(
+								feedPreview: FeedPreview,
+								index: number,
+							) => feedPreview.user.id + index.toString()}
+						/>
+					)}
 				</FeedList>
 			</ScreenContainer>
 		</SafeAreaView>
