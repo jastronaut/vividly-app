@@ -5,7 +5,7 @@ import { FeedContext } from '../FeedProvider';
 import { AuthContext } from '../AuthProvider';
 
 import Header from './Header';
-import ScreenLoadingIndicator from './ScreenLoadingIndicator';
+import ScreenLoadingIndicator from '../components/ScreenLoadingIndicator';
 import UnreadBanner from './UnreadBanner';
 import PostsList from './PostsList';
 import { FriendUser, Post } from '../types';

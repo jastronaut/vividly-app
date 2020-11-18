@@ -22,16 +22,3 @@ export const UserHeader = styled.View`
 	padding: 0 5% 2%;
 	align-items: center;
 `;
-
-export const LoadingContainer = styled.View`
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	background: black;
-	z-index: 1000;
-	opacity: 0.25;
-	top: 0;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`;

@@ -13,7 +13,7 @@ import {
 	SubmitText,
 	ErrorText,
 } from './styles';
-import ScreenLoadingIndicator from '../UserProfile/ScreenLoadingIndicator';
+import ScreenLoadingIndicator from '../components/ScreenLoadingIndicator';
 
 const Login = () => {
 	const { login } = useContext(AuthContext);

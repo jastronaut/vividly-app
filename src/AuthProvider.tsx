@@ -6,6 +6,7 @@ type AuthState = {
 	authUser: AuthUser | null;
 	jwt: string | null;
 	isAuthLoading: boolean;
+	isAuthInitFinished: boolean;
 };
 
 type AuthContextType = {
@@ -19,6 +20,7 @@ export const AuthContext = createContext<AuthContextType>({
 		jwt: null,
 		authUser: null,
 		isAuthLoading: false,
+		isAuthInitFinished: false,
 	},
 	login: () => null,
 	logout: () => null,
@@ -27,11 +29,12 @@ export const AuthContext = createContext<AuthContextType>({
 enum AUTH_ACTIONS {
 	GET_USER,
 	AUTH_LOADING,
+	AUTH_INIT_FINISHED,
 }
 
 type GetUserAction = {
 	type: typeof AUTH_ACTIONS.GET_USER;
-	payload: Omit<AuthState, 'isAuthLoading'>;
+	payload: Omit<AuthState, 'isAuthLoading' | 'isAuthInitFinished'>;
 };
 
 type AuthLoadingAction = {
@@ -39,12 +42,18 @@ type AuthLoadingAction = {
 	payload?: null;
 };
 
-type AuthActions = GetUserAction | AuthLoadingAction;
+type AuthInitFinishedAction = {
+	type: typeof AUTH_ACTIONS.AUTH_INIT_FINISHED;
+	payload?: null;
+};
+
+type AuthActions = GetUserAction | AuthLoadingAction | AuthInitFinishedAction;
 
 function reducer(state: AuthState, action: AuthActions): AuthState {
 	switch (action.type) {
 		case AUTH_ACTIONS.GET_USER:
 			return {
+				...state,
 				...action.payload,
 				isAuthLoading: false,
 			};
@@ -52,6 +61,12 @@ function reducer(state: AuthState, action: AuthActions): AuthState {
 			return {
 				...state,
 				isAuthLoading: true,
+			};
+		case AUTH_ACTIONS.AUTH_INIT_FINISHED:
+			return {
+				...state,
+				isAuthInitFinished: true,
+				isAuthLoading: false,
 			};
 		default:
 			return state;
@@ -63,6 +78,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 		authUser: null,
 		jwt: null,
 		isAuthLoading: false,
+		isAuthInitFinished: false,
 	});
 
 	useEffect(() => {
@@ -108,6 +124,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 						jwt: token,
 					},
 				});
+
+				authDispatch({
+					type: AUTH_ACTIONS.AUTH_INIT_FINISHED,
+				});
 			} catch (e) {
 				console.log('Error: cant load init data from storage');
 				console.log(e);
@@ -118,6 +138,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 	}, []);
 
 	const login = (username: string, password: string) => {
+		authDispatch({
+			type: AUTH_ACTIONS.AUTH_LOADING,
+		});
+
 		const attemptLogin = async () => {
 			try {
 				const loginReq = await fetch(
@@ -159,23 +183,34 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 		};
 		// attemptLogin();
 
-		authDispatch({
-			type: AUTH_ACTIONS.GET_USER,
-			payload: {
-				authUser: {
-					id: '0',
-					name: 'Very Cool User ✨',
-					username: 'coolestusername',
-					bio: "I love using Peached even if it doesn't work",
-					profilePicture: '',
-					emailVerified: true,
-					email: 'test@test.com',
-					blockedWords: [],
-					friends: [],
+		const fakeLogin = async () => {
+			const testUser = {
+				id: '0',
+				name: 'Very Cool User ✨',
+				username: 'coolestusername',
+				bio: "I love using Peached even if it doesn't work",
+				profilePicture: '',
+				emailVerified: true,
+				email: 'test@test.com',
+				blockedWords: [],
+				friends: [],
+			};
+
+			const testToken = 'Fake.JWT.Lol';
+
+			await AsyncStorage.setItem('@jwt', testToken);
+			await AsyncStorage.setItem('@authUser', JSON.stringify(testUser));
+
+			authDispatch({
+				type: AUTH_ACTIONS.GET_USER,
+				payload: {
+					authUser: testUser,
+					jwt: testToken,
 				},
-				jwt: 'Fake.JWT.Lol',
-			},
-		});
+			});
+		};
+
+		fakeLogin();
 	};
 
 	const logout = () => {
