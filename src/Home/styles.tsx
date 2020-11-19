@@ -1,26 +1,12 @@
 import styled from 'styled-components/native';
 
-
-
-export const Header = styled.View`
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-`;
-
-export const IconsContainer = styled.View`
-	flex-direction: row;
-	justify-content: space-between;
-	width: 25%;
-`;
-
 export const FeedList = styled.View`
 	margin: 5% 2%;
 `;
 
 export const PostPreviewContainer = styled.View`
 	border-bottom-width: 2px;
-	border-bottom-color: #ddd;
+	border-bottom-color: ${({ theme }) => theme.colors.border};
 	border-style: solid;
 	display: flex;
 	flex-direction: row;
@@ -34,18 +20,26 @@ export const ProfilePicPreview = styled.Image`
 	height: 75px;
 `;
 
+export const PreviewText = styled.Text`
+	color: ${({ theme }) => theme.colors.muted.text};
+`;
+
 export const PreviewRight = styled.View`
 	padding-left: 5%;
 	display: flex;
 	flex-grow: 1;
-
 `;
 
 export const PreviewName = styled.Text`
 	font-size: 15px;
 	font-weight: bold;
+	color: ${({ theme }) => theme.colors.main.text};
 `;
 
 export const UnreadIndicator = styled.View`
 	padding-left: 5%;
+`;
+
+export const StyledSAV = styled.SafeAreaView`
+	background-color: ${({ theme }) => theme.colors.main.background};
 `;

@@ -17,6 +17,8 @@ import {
 	PreviewRight,
 	PreviewName,
 	UnreadIndicator,
+	StyledSAV,
+	PreviewText,
 } from './styles';
 import { ScreenContainer } from '../styles';
 
@@ -51,9 +53,9 @@ const renderFriendPreview = (
 					<PreviewRight>
 						<PreviewName>{feedPreview.user.username}</PreviewName>
 						{feedPreview.newestPost ? (
-							<Text>
+							<PreviewText>
 								{formatPreview(feedPreview.newestPost.content)}
-							</Text>
+							</PreviewText>
 						) : null}
 					</PreviewRight>
 					{feedPreview.user.unreadPosts ? (
@@ -61,10 +63,10 @@ const renderFriendPreview = (
 							<Text>🟢</Text>
 						</UnreadIndicator>
 					) : null}
-					<Text>
+					<PreviewText>
 						{feedPreview.newestPost &&
 							formatPostTime(feedPreview.newestPost.createdTime)}
-					</Text>
+					</PreviewText>
 				</PostPreviewContainer>
 			)}
 		</Pressable>
@@ -89,7 +91,7 @@ const Home = ({ navigation }: HomeProps) => {
 	};
 
 	return (
-		<SafeAreaView style={{ backgroundColor: 'white' }}>
+		<StyledSAV>
 			<ScreenContainer>
 				<Header navigation={navigation} />
 				<FeedList>
@@ -119,7 +121,7 @@ const Home = ({ navigation }: HomeProps) => {
 					)}
 				</FeedList>
 			</ScreenContainer>
-		</SafeAreaView>
+		</StyledSAV>
 	);
 };
 

@@ -1,13 +1,16 @@
 import React from 'react';
 
 import AuthProvider from './AuthProvider';
+import ThemeProvider from './ThemeProvider';
 
 import Routes from './Routes';
 
 export default function App() {
 	return (
 		<AuthProvider>
-			<Routes />
+			<ThemeProvider>
+				<Routes />
+			</ThemeProvider>
 		</AuthProvider>
 	);
 }
