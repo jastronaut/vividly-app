@@ -5,7 +5,6 @@ import { Pressable, PressableProps, View, Text } from 'react-native';
 const ButtonWrapper = styled.View`
 	background-color: #dd9e9e;
 	padding: 10px;
-	width: 25%;
 	border-radius: 5px;
 `;
 
