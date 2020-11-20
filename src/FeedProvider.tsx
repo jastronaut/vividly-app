@@ -58,9 +58,7 @@ function reducer(state: FeedState, action: FeedActions): FeedState {
 					userFeed.user.unreadPosts = 0;
 				}
 				return userFeed;
-            });
-
-            console.log(state.feed.filter(feedusr => feedusr.user.id === action.payload));
+			});
 
 			return {
 				feed: feed,

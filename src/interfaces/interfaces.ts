@@ -1,4 +1,14 @@
-import { StackScreenProps } from '@react-navigation/stack';
+enum FriendType {
+	pending = 'pending',
+	outgoing = 'outgoing',
+	friends = 'friends',
+}
+
+export interface Friend {
+	friendId: string;
+	friendType: FriendType;
+	lastReadPostTime: Date | null;
+}
 
 export interface User {
 	id: string;
@@ -6,13 +16,21 @@ export interface User {
 	username: string;
 	profilePicture: string;
 	unreadPosts: number;
-	latestPost: PostPreview;
+	newestPost: PostPreview | null;
 	bio: string;
+}
+
+export interface CurUser extends User {
+	email: string;
+	emailVerified: boolean;
+	friends: FriendType[];
+	blockedWords: string[];
+	jwtToken: string;
 }
 
 export interface PostPreview {
 	id: string;
-	content: PostContent[];
+	content: string;
 	updatedTime: number;
 }
 
@@ -29,23 +47,8 @@ export interface PostContent {
 	content: string;
 }
 
-// routes
-type HomeStackParamList = {
-	Home: undefined;
-	UserProfile: {
-		user: User;
-		index: number;
-	};
-	Search: undefined;
-	PostPage: {
-		post: Post;
-		user: User;
-	};
-};
-
-export type UserProfileProps = StackScreenProps<
-	HomeStackParamList,
-	'UserProfile'
->;
-export type PostPageProps = StackScreenProps<HomeStackParamList, 'PostPage'>;
-export type HomeProps = StackScreenProps<HomeStackParamList, 'Home'>;
+export interface Comment {
+	id: string;
+	body: string;
+	author: User;
+}

@@ -180,7 +180,6 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 			}
 		};
 		// fetchFeed();
-		console.log('fetfhing...');
 		profileDispatch({
 			type: PROFILE_ACTIONS.GET_POSTS,
 			payload: [
