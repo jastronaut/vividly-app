@@ -4,7 +4,6 @@ import { Text, View } from 'react-native';
 
 import { Comment } from '../../types';
 import SingleComment from './SingleComment';
-import AddComment from './AddComment';
 
 const EmptyCommentsContainer = styled.View`
 	margin-top: 5%;
@@ -12,7 +11,7 @@ const EmptyCommentsContainer = styled.View`
 `;
 
 const EmptyCommentsText = styled.Text`
-	color: #333;
+	color: ${({ theme }) => theme.colors.muted.fg};
 	text-align: center;
 `;
 
@@ -30,7 +29,7 @@ const CommentsContainer = ({ comments }: CommentsContainerProps) => {
 	}
 
 	return (
-		<View style={{ backgroundColor: 'purple' }}>
+		<View>
 			{comments.map((comment) => (
 				<SingleComment key={comment.id} comment={comment} />
 			))}

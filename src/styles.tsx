@@ -7,6 +7,6 @@ export const Title = styled.Text`
 
 export const ScreenContainer = styled.View`
 	padding: 0 5%;
-	background-color: ${({ theme }) => theme.colors.main.background};
+	background-color: ${({ theme }) => theme.colors.main.bg};
 	height: 100%;
 `;

@@ -8,7 +8,7 @@ Icon.loadFont();
 export const Title = styled.Text`
 	font-size: 40px;
 	font-weight: bold;
-	color: ${({ theme }) => theme.colors.main.text};
+	color: ${({ theme }) => theme.colors.main.fg};
 `;
 export const HeaderContainer = styled.View`
 	display: flex;

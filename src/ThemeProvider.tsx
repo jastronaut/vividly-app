@@ -8,26 +8,28 @@ import React, {
 import AsyncStorage from '@react-native-community/async-storage';
 import { ThemeProvider as SCThemeProvider } from 'styled-components/native';
 
+const DEFAULT_ACCENT_COLOR = '#dd9e9e';
+
 const darkColors = {
 	main: {
-		text: '#fff',
-		background: '#222',
+		fg: '#fff',
+		bg: '#222',
 	},
 	muted: {
-		text: '#aaa',
-		background: '#333',
+		fg: '#aaa',
+		bg: '#333',
 	},
 	border: '#555',
 };
 
 const lightColors = {
 	main: {
-		text: '#222',
-		background: '#fff',
+		fg: '#222',
+		bg: '#fff',
 	},
 	muted: {
-		text: '#555',
-		background: '#eee',
+		fg: '#555',
+		bg: '#eee',
 	},
 	border: '#ddd',
 };
@@ -36,6 +38,7 @@ type ThemeState = {
 	isLightMode: boolean;
 	accentColor: string;
 	colors: object;
+	navHeaderStyles: object;
 };
 
 type ThemeDispatchContextType = {
@@ -44,12 +47,25 @@ type ThemeDispatchContextType = {
 	setAccentColor: Function;
 };
 
-export const ThemeDispatchContext = createContext<ThemeDispatchContextType>({
-	state: {
+const makeInitialThemState = () => {
+	return {
 		isLightMode: true,
 		colors: lightColors,
-		accentColor: '#dd9e9e',
-	},
+		accentColor: DEFAULT_ACCENT_COLOR,
+		navHeaderStyles: {
+			headerStyle: {
+				backgroundColor: lightColors.main.bg,
+			},
+			headerTintColor: DEFAULT_ACCENT_COLOR,
+			headerTitleStyle: {
+				color: lightColors.main.fg,
+			},
+		},
+	};
+};
+
+export const ThemeDispatchContext = createContext<ThemeDispatchContextType>({
+	state: makeInitialThemState(),
 	toggleTheme: () => null,
 	setAccentColor: () => null,
 });
@@ -90,11 +106,29 @@ function reducer(state: ThemeState, action: ThemeActions): ThemeState {
 						...state,
 						isLightMode: false,
 						colors: darkColors,
+						navHeaderStyles: {
+							headerStyle: {
+								backgroundColor: darkColors.main.bg,
+							},
+							headerTintColor: state.accentColor,
+							headerTitleStyle: {
+								color: darkColors.main.fg,
+							},
+						},
 				  }
 				: {
 						...state,
 						isLightMode: true,
 						colors: lightColors,
+						navHeaderStyles: {
+							headerStyle: {
+								backgroundColor: lightColors.main.bg,
+							},
+							headerTintColor: state.accentColor,
+							headerTitleStyle: {
+								color: lightColors.main.fg,
+							},
+						},
 				  };
 		case THEME_ACTIONS.SET_THEME:
 			return action.payload
@@ -102,11 +136,29 @@ function reducer(state: ThemeState, action: ThemeActions): ThemeState {
 						...state,
 						isLightMode: true,
 						colors: lightColors,
+						navHeaderStyles: {
+							headerStyle: {
+								backgroundColor: lightColors.main.bg,
+							},
+							headerTintColor: state.accentColor,
+							headerTitleStyle: {
+								color: lightColors.main.fg,
+							},
+						},
 				  }
 				: {
 						...state,
 						isLightMode: false,
 						colors: darkColors,
+						navHeaderStyles: {
+							headerStyle: {
+								backgroundColor: darkColors.main.bg,
+							},
+							headerTintColor: state.accentColor,
+							headerTitleStyle: {
+								color: darkColors.main.fg,
+							},
+						},
 				  };
 		default:
 			return state;
@@ -114,11 +166,7 @@ function reducer(state: ThemeState, action: ThemeActions): ThemeState {
 }
 
 const ThemeProvider = ({ children }: { children: ReactNode }) => {
-	const [state, dispatch] = useReducer(reducer, {
-		isLightMode: true,
-		colors: lightColors,
-		accentColor: '#dd9e9e',
-	});
+	const [state, dispatch] = useReducer(reducer, makeInitialThemState());
 	// TODO: load theme from storage on init
 	useEffect(() => {
 		const load = async () => {
@@ -149,7 +197,10 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
 						payload: accentColor,
 					});
 				} else {
-					await AsyncStorage.setItem('@theme.accentColor', '#dd9e9e');
+					await AsyncStorage.setItem(
+						'@theme.accentColor',
+						DEFAULT_ACCENT_COLOR,
+					);
 				}
 			} catch (_e) {}
 		};

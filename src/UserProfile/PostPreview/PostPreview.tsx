@@ -4,11 +4,16 @@ import { Text, Pressable } from 'react-native';
 import { Post, PostContent } from '../../types';
 import formatPostTime from '../../utils/formatPostTime';
 
-import { PostWrapper, PostContainer, PostInteractionContainer } from './styles';
+import {
+	PostWrapper,
+	PostContainer,
+	PostInteractionContainer,
+	PostText,
+	PostMetaText,
+} from './styles';
 
-import LikedIcon from './assets/Liked.svg';
-import UnlikedIcon from './assets/Unliked.svg';
-import CommentsIcon from './assets/Comments.svg';
+import { Heart } from '../../components/Icons/Heart';
+import { Comment } from '../../components/Icons/Comment';
 
 type PostPreviewProps = {
 	post: Post;
@@ -23,23 +28,20 @@ const PostPreview = ({ post, onPressPost }: PostPreviewProps) => {
 				{({ pressed }) => (
 					<PostContainer key={post.id} isPressed={pressed}>
 						{post.content.map((c: PostContent) => (
-							<Text key={post.id + '-' + c.index}>
+							<PostText key={post.id + '-' + c.index}>
 								{c.content}
-							</Text>
+							</PostText>
 						))}
 					</PostContainer>
 				)}
 			</Pressable>
 			<PostInteractionContainer>
-				{post.isLikedByUser ? (
-					<LikedIcon height='100%' />
-				) : (
-					<UnlikedIcon height='100%' />
-				)}
-				<Text>{post.likeCount}</Text>
-				<CommentsIcon height='100%' />
-				<Text>{post.comments.length}</Text>
-				<Text>{`  —  ${formatPostTime(post.createdTime)}`}</Text>
+				<Heart isLiked={post.isLikedByUser} />
+				<PostMetaText>{post.likeCount}</PostMetaText>
+				<Comment />
+				<PostMetaText>{post.comments.length}</PostMetaText>
+				<PostMetaText>—</PostMetaText>
+				<PostMetaText>{formatPostTime(post.createdTime)}</PostMetaText>
 			</PostInteractionContainer>
 		</PostWrapper>
 	);

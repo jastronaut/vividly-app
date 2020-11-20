@@ -7,7 +7,6 @@ import { FriendUser } from '../types';
 const UserInfoContainer = styled.View`
 	display: flex;
 	flex-direction: row;
-	border: 2px solid red;
 `;
 
 const ProfilePictureContainer = styled.View``;
@@ -26,11 +25,16 @@ const NamesContainer = styled.View`
 const Name = styled.Text`
 	font-size: 15px;
 	font-weight: bold;
+	color: ${({ theme }) => theme.colors.main.fg};
 `;
 
 export const Username = styled.Text`
-	color: #aaa;
+	color: ${({ theme }) => theme.colors.muted.fg};
 	font-size: 15px;
+`;
+
+const Bio = styled.Text`
+	color: ${({ theme }) => theme.colors.main.fg};
 `;
 
 type HeaderProps = {
@@ -51,7 +55,7 @@ const Header = (props: HeaderProps) => {
 				<Name>{user.name}</Name>
 				<Username>@{user.username}</Username>
 			</NamesContainer>
-			<Text>{user.bio}</Text>
+			<Bio>{user.bio}</Bio>
 		</UserInfoContainer>
 	);
 };

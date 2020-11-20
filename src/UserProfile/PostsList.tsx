@@ -5,9 +5,7 @@ import { FlatList, View } from 'react-native';
 import { Post } from '../types';
 import PostPreview from './PostPreview';
 
-export const DebugContainer = styled.View`
-	border: 2px solid red;
-`;
+export const DebugContainer = styled.View``;
 
 const createProfilePost = ({
 	item,

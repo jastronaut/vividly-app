@@ -14,13 +14,16 @@ import CommentsContainer from './CommentsContainer';
 
 const Container = styled.View<{ isInputFocused: boolean }>`
 	position: absolute;
-	bottom: ${({ isInputFocused }) => (isInputFocused ? '90px' : '0')};
+	bottom: ${({ isInputFocused }) => (isInputFocused ? '90px' : '20px')};
 	width: ${Dimensions.get('screen').width}px;
-	background-color: white;
+	background-color: ${({ theme }) => theme.colors.main.bg};
 	display: flex;
 	padding: 2% 5% 3%;
 	flex-direction: row;
 	justify-content: space-between;
+	max-height: ${Dimensions.get('screen').height / 4}px;
+	border-top-width: 1px;
+	border-top-color: ${({ theme }) => theme.colors.border};
 `;
 
 const ButtonStyled = styled(Button)`
@@ -28,10 +31,13 @@ const ButtonStyled = styled(Button)`
 	padding: 0px;
 `;
 
-const Input = styled.TextInput`
+const Input = styled.TextInput.attrs(({ theme }) => ({
+	placeholderTextColor: theme.colors.muted.fg,
+}))`
 	border-radius: 5px;
-	border: solid 2px #eee;
-	padding: 2% 0%;
+	border: solid 1px ${({ theme }) => theme.colors.border};
+	padding: 2% 1%;
+	color: ${({ theme }) => theme.colors.main.fg};
 `;
 
 const InputWrapper = styled.View`
@@ -46,10 +52,6 @@ const AddComment = () => {
 	const [newComment, setNewComment] = useState<string>('');
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
-
-	useEffect(() => {
-		console.log('focus: ', isInputFocused);
-	}, [isInputFocused]);
 
 	return (
 		<Container isInputFocused={isInputFocused}>

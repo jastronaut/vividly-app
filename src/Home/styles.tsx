@@ -21,7 +21,7 @@ export const ProfilePicPreview = styled.Image`
 `;
 
 export const PreviewText = styled.Text`
-	color: ${({ theme }) => theme.colors.muted.text};
+	color: ${({ theme }) => theme.colors.muted.fg};
 `;
 
 export const PreviewRight = styled.View`
@@ -33,7 +33,7 @@ export const PreviewRight = styled.View`
 export const PreviewName = styled.Text`
 	font-size: 15px;
 	font-weight: bold;
-	color: ${({ theme }) => theme.colors.main.text};
+	color: ${({ theme }) => theme.colors.main.fg};
 `;
 
 export const UnreadIndicator = styled.View`
@@ -41,5 +41,5 @@ export const UnreadIndicator = styled.View`
 `;
 
 export const StyledSAV = styled.SafeAreaView`
-	background-color: ${({ theme }) => theme.colors.main.background};
+	background-color: ${({ theme }) => theme.colors.main.bg};
 `;

@@ -13,12 +13,14 @@ import MyPage from '../UserProfile/MyPage';
 import AppSettings from '../AppSettings';
 
 import { AuthContext } from '../AuthProvider';
+import { ThemeContext } from 'styled-components/native';
 import FeedProvider from '../FeedProvider';
 
 const HomeStack = createStackNavigator();
 
 const Routes = () => {
 	const { authState } = useContext(AuthContext);
+	const { navHeaderStyles } = useContext(ThemeContext);
 
 	return (
 		<FeedProvider>
@@ -35,6 +37,7 @@ const Routes = () => {
 								<HomeStack.Screen
 									name='AppSettings'
 									component={AppSettings}
+									options={navHeaderStyles}
 								/>
 
 								<HomeStack.Screen
@@ -42,13 +45,15 @@ const Routes = () => {
 									component={UserProfile}
 									options={({ route }) => ({
 										title: `${route.params.user.name}'s Page`,
+										...navHeaderStyles,
 									})}
 								/>
 								<HomeStack.Screen
 									name='PostPage'
-									options={({ route }) => ({
-										title: `${route.params.user.name}'s Post`,
-									})}
+									options={{
+										title: 'Post',
+										...navHeaderStyles,
+									}}
 									component={PostPage}
 								/>
 

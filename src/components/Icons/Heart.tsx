@@ -1,18 +1,20 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 import Svg, { SvgProps, Path } from 'react-native-svg';
+import { ThemeContext } from 'styled-components/native';
 
 type HeartProps = {
 	isLiked: boolean;
 };
 
 export function Heart({ isLiked, ...rest }: SvgProps & HeartProps) {
+	const theme = useContext(ThemeContext);
 	return (
 		<Svg
 			width={15}
 			height={15}
 			viewBox='0 0 24 24'
-			fill={isLiked ? 'red' : 'none'}
-			stroke={isLiked ? 'red' : 'black'}
+			fill={isLiked ? theme.accentColor : 'none'}
+			stroke={isLiked ? theme.accentColor : theme.colors.muted.fg}
 			strokeWidth={2}
 			strokeLinecap='round'
 			strokeLinejoin='round'
