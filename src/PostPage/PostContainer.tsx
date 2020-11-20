@@ -7,7 +7,7 @@ import {
 	PostInteractionContainer,
 	PostMetaText,
 } from '../UserProfile/PostPreview/styles';
-import { Username, DisplayName, TextMain } from './styles';
+import { Username, DisplayName, TextMain, Avatar } from './styles';
 import formatPostTime from '../utils/formatPostTime';
 import { Heart } from '../components/Icons/Heart';
 import { Comment } from '../components/Icons/Comment';
@@ -22,20 +22,14 @@ const OPHeader = styled.View`
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-start;
-	margin-bottom: 5%;
+	margin-bottom: 2%;
 `;
 
 const OPNamesContainer = styled.View`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding-left: 5%;
-`;
-
-const OPProfilePicture = styled.Image`
-	border-radius: 25px;
-	height: 50px;
-	width: 50px;
+	padding-left: 2%;
 `;
 
 type PostContainerProps = {
@@ -47,7 +41,7 @@ const PostContainer = ({ user, post }: PostContainerProps) => {
 	return (
 		<PostStyled>
 			<OPHeader>
-				<OPProfilePicture source={require('../Home/pup.jpg')} />
+				<Avatar source={require('../Home/pup.jpg')} />
 				<OPNamesContainer>
 					<DisplayName>{user.name}</DisplayName>
 					<Username>@{user.username}</Username>

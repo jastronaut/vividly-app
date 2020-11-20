@@ -10,6 +10,7 @@ export const ScrollViewStyled = styled.ScrollView`
 `;
 
 export const DisplayName = styled.Text`
+	font-weight: bold;
 	color: ${({ theme }) => theme.colors.main.fg};
 `;
 
@@ -19,4 +20,10 @@ export const Username = styled.Text`
 
 export const TextMain = styled.Text`
 	color: ${({ theme }) => theme.colors.main.fg};
+`;
+
+export const Avatar = styled.Image`
+	border-radius: 25px;
+	height: 50px;
+	width: 50px;
 `;

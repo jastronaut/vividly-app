@@ -224,6 +224,36 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 							content: 'this is my own post',
 							createdTime: '2020-11-16T02:35:41+00:00',
 						},
+						{
+							id: 'post1comment2',
+							author: {
+								bio: 'lalala',
+								id: 'fakeuser1',
+								name: 'fake user',
+								profilePicture:
+									'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
+								isFriendsWithAuthUser: true,
+								username: 'fakseuser',
+							},
+							content:
+								'jflskdf skdfjh sdjf alksdjf askdf askldfsdjhf asjdfh asdf. ksdfh ksdj djksfh askjdf skdjhf lasdflas lasdhf\n skdhfklsaf\n',
+							createdTime: '2020-11-18T02:35:41+00:00',
+						},
+						{
+							id: 'post1comment3',
+							author: {
+								bio: 'lalala',
+								id: 'fakeuser1',
+								name: 'fake user',
+								profilePicture:
+									'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
+								isFriendsWithAuthUser: true,
+								username: 'fakseuser',
+							},
+							content:
+								'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss',
+							createdTime: '2020-11-19T02:35:41+00:00',
+						},
 					],
 					content: [
 						{
