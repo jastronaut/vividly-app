@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
+import { StatusBar } from 'react-native';
 
 import ScreenLoadingIndicator from '../components/ScreenLoadingIndicator';
 import Login from '../Login';
@@ -20,11 +21,14 @@ const HomeStack = createStackNavigator();
 
 const Routes = () => {
 	const { authState } = useContext(AuthContext);
-	const { navHeaderStyles } = useContext(ThemeContext);
+	const { navHeaderStyles, isLightMode } = useContext(ThemeContext);
 
 	return (
 		<FeedProvider>
 			<SafeAreaProvider>
+				<StatusBar
+					barStyle={isLightMode ? 'dark-content' : 'light-content'}
+				/>
 				{authState.isAuthInitFinished ? (
 					authState.authUser && authState.jwt ? (
 						<NavigationContainer>

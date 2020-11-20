@@ -41,38 +41,35 @@ const renderFriendPreview = (
 	feedPreview: FeedPreview,
 	index: number,
 	onPress: Function,
-) =>
-	feedPreview ? (
-		// TODO: favorites indicator
-		<Pressable
-			key={feedPreview.user.id}
-			onPress={() => onPress(feedPreview.user, index)}>
-			{({ pressed }) => (
-				<PostPreviewContainer>
-					<ProfilePicPreview source={require('./pup.jpg')} />
-					<PreviewRight>
-						<PreviewName>{feedPreview.user.username}</PreviewName>
-						{feedPreview.newestPost ? (
-							<PreviewText>
-								{formatPreview(feedPreview.newestPost.content)}
-							</PreviewText>
-						) : null}
-					</PreviewRight>
-					{feedPreview.user.unreadPosts ? (
-						<UnreadIndicator>
-							<Text>🟢</Text>
-						</UnreadIndicator>
+) => (
+	// TODO: favorites indicator
+	<Pressable
+		key={feedPreview.user.id}
+		onPress={() => onPress(feedPreview.user, index)}>
+		{({ pressed }) => (
+			<PostPreviewContainer isPressed={pressed}>
+				<ProfilePicPreview source={require('./pup.jpg')} />
+				<PreviewRight>
+					<PreviewName>{feedPreview.user.username}</PreviewName>
+					{feedPreview.newestPost ? (
+						<PreviewText>
+							{formatPreview(feedPreview.newestPost.content)}
+						</PreviewText>
 					) : null}
-					<PreviewText>
-						{feedPreview.newestPost &&
-							formatPostTime(feedPreview.newestPost.createdTime)}
-					</PreviewText>
-				</PostPreviewContainer>
-			)}
-		</Pressable>
-	) : (
-		<Text>No</Text>
-	);
+				</PreviewRight>
+				{feedPreview.user.unreadPosts ? (
+					<UnreadIndicator>
+						<Text>🟢</Text>
+					</UnreadIndicator>
+				) : null}
+				<PreviewText>
+					{feedPreview.newestPost &&
+						formatPostTime(feedPreview.newestPost.createdTime)}
+				</PreviewText>
+			</PostPreviewContainer>
+		)}
+	</Pressable>
+);
 
 const Home = ({ navigation }: HomeProps) => {
 	const { authState } = useContext(AuthContext);

@@ -3,8 +3,8 @@ import styled from 'styled-components/native';
 import { Pressable, PressableProps, View, Text } from 'react-native';
 
 const ButtonWrapper = styled.View`
-	background-color: #dd9e9e;
-	padding: 10px;
+	background-color: ${({ theme }) => theme.accentColor};
+	padding: 5px 10px;
 	border-radius: 5px;
 `;
 

@@ -4,7 +4,7 @@ export const FeedList = styled.View`
 	margin: 5% 2%;
 `;
 
-export const PostPreviewContainer = styled.View`
+export const PostPreviewContainer = styled.View<{ isPressed: boolean }>`
 	border-bottom-width: 2px;
 	border-bottom-color: ${({ theme }) => theme.colors.border};
 	border-style: solid;
@@ -12,6 +12,8 @@ export const PostPreviewContainer = styled.View`
 	flex-direction: row;
 	align-items: center;
 	padding: 2% 0;
+	background-color: ${({ theme, isPressed }) =>
+		isPressed ? theme.colors.muted.bg : theme.colors.main.bg};
 `;
 
 export const ProfilePicPreview = styled.Image`
