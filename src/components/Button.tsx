@@ -2,9 +2,14 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { Pressable, PressableProps, View, Text } from 'react-native';
 
-const ButtonWrapper = styled.View`
-	background-color: ${({ theme }) => theme.accentColor};
-	padding: 5px 10px;
+type ButtonProps = {
+	size?: 'small' | 'large' | 'normal';
+	color?: string;
+};
+
+const ButtonWrapper = styled.View<ButtonProps>`
+	background-color: ${({ theme, color }) => color ?? theme.accentColor};
+	padding: ${ ({size}) => size === 'normal' ? '5px 10px' : (size === 'large' ? '10px 15px' : '2px 5px')};
 	border-radius: 5px;
 `;
 
@@ -13,11 +18,11 @@ const ButtonText = styled.Text`
 	text-align: center;
 `;
 
-const Button = (props: PressableProps) => {
-	const { children, ...rest } = props;
+const Button = (props: ButtonProps & PressableProps) => {
+	const { children, size='normal', color, ...rest } = props;
 	return (
 		<Pressable {...rest}>
-			<ButtonWrapper>
+			<ButtonWrapper size={size} color={color}>
 				<ButtonText>{children}</ButtonText>
 			</ButtonWrapper>
 		</Pressable>

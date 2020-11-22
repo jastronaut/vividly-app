@@ -1,80 +1,36 @@
-import React, { useContext, useEffect } from 'react';
-import { Text, Pressable, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useContext, useEffect, useState } from 'react';
+import { Text, FlatList } from 'react-native';
 
 import { AuthContext } from '../AuthProvider';
 import { HomeProps } from '../Routes/interfaces';
 import { FeedContext } from '../FeedProvider';
-import { FeedPreview, FriendUser, PostContent } from '../types';
-
-import formatPostTime from '../utils/formatPostTime';
+import { FeedPreview, FriendUser } from '../types';
 
 import Header from './Header';
 import {
-	ProfilePicPreview,
 	FeedList,
-	PostPreviewContainer,
-	PreviewRight,
-	PreviewName,
-	UnreadIndicator,
 	StyledSAV,
-	PreviewText,
 } from './styles';
 import { ScreenContainer } from '../styles';
-
-const formatPreview = (preview: PostContent) => {
-	switch (preview.postType) {
-		case 'text':
-		case 'link':
-			return (
-				preview.content.substring(0, 35) +
-				(preview.content.length > 35 ? '...' : '')
-			);
-		case 'image':
-			return 'Image';
-		default:
-			return '';
-	}
-};
+import FeedPreviewComponent from './FeedPreviewComponent';
 
 const renderFriendPreview = (
 	feedPreview: FeedPreview,
 	index: number,
 	onPress: Function,
 ) => (
-	// TODO: favorites indicator
-	<Pressable
-		key={feedPreview.user.id}
-		onPress={() => onPress(feedPreview.user, index)}>
-		{({ pressed }) => (
-			<PostPreviewContainer isPressed={pressed}>
-				<ProfilePicPreview source={require('./pup.jpg')} />
-				<PreviewRight>
-					<PreviewName>{feedPreview.user.username}</PreviewName>
-					{feedPreview.newestPost ? (
-						<PreviewText>
-							{formatPreview(feedPreview.newestPost.content)}
-						</PreviewText>
-					) : null}
-				</PreviewRight>
-				{feedPreview.user.unreadPosts ? (
-					<UnreadIndicator>
-						<Text>🟢</Text>
-					</UnreadIndicator>
-				) : null}
-				<PreviewText>
-					{feedPreview.newestPost &&
-						formatPostTime(feedPreview.newestPost.createdTime)}
-				</PreviewText>
-			</PostPreviewContainer>
-		)}
-	</Pressable>
+	<FeedPreviewComponent
+		feedPreview={feedPreview}
+		index={index}
+		onPress={onPress}
+	/>
 );
 
 const Home = ({ navigation }: HomeProps) => {
 	const { authState } = useContext(AuthContext);
 	const { feedState, getFeed } = useContext(FeedContext);
 	const { isFeedLoading, feed } = feedState;
+	const [friendQuery, setFriendQuery] = useState<string>('');
 
 	useEffect(() => {
 		getFeed(authState.jwt);
@@ -87,16 +43,37 @@ const Home = ({ navigation }: HomeProps) => {
 		});
 	};
 
+	const onPressAuthUserPreview = () => {
+		console.log('TODO');
+	}
+
 	return (
 		<StyledSAV>
 			<ScreenContainer>
-				<Header navigation={navigation} />
+				<Header
+					friendQuery={friendQuery}
+					setFriendQuery={setFriendQuery}
+					onPressSettings={() => navigation.navigate('AppSettings')}
+					onPressAuthUserPreview={onPressAuthUserPreview}
+				/>
 				<FeedList>
 					{isFeedLoading ? (
 						<Text>Loading</Text>
 					) : (
 						<FlatList<FeedPreview>
-							data={feed}
+							data={
+								friendQuery.length
+									? feed.filter(
+											(friend) =>
+												friend.user.name.indexOf(
+													friendQuery,
+												) > -1 ||
+												friend.user.username.indexOf(
+													friendQuery,
+												) > -1,
+									  )
+									: feed
+							}
 							renderItem={({
 								item,
 								index,

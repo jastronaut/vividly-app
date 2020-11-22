@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { Text, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { Avatar, Username, DisplayName, TextMain } from '../styles';
 import { Comment } from '../../types';
@@ -43,7 +44,9 @@ type Props = {
 };
 
 const SingleComment = ({ comment }: Props) => {
+	const navigation = useNavigation();
 	const { author } = comment;
+
 	return (
 		<Pressable>
 			{({ pressed }) => (
