@@ -27,6 +27,7 @@ export interface AuthUser extends BaseUser {
 	email: string;
 	blockedWords: string[];
 	friends: Friend[];
+	posts: Post[];
 }
 
 export interface User extends BaseUser {

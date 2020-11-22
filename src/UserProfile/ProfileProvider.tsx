@@ -1,6 +1,7 @@
 import React, { useReducer, createContext, ReactNode } from 'react';
 
-import { Post, POST_TYPE, Comment, AuthUser } from '../types';
+import { Post, Comment, AuthUser } from '../types';
+import { mockProfiles } from '../mockData';
 
 type ProfileState = {
 	posts: Post[];
@@ -149,10 +150,11 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		isProfileLoading: false,
 	});
 
-	const getPosts = (jwt: string, id: string) => {
+	const getPosts = (jwt: string, id: string, startingPostIndex=0) => {
 		profileDispatch({
 			type: PROFILE_ACTIONS.POSTS_LOADING,
 		});
+
 		const fetchFeed = async () => {
 			try {
 				const req = await fetch(
@@ -182,93 +184,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		// fetchFeed();
 		profileDispatch({
 			type: PROFILE_ACTIONS.GET_POSTS,
-			payload: [
-				{
-					id: 'post2',
-					isUpdated: false,
-					likeCount: 3,
-					isLikedByUser: true,
-					createdTime: '2020-11-13T02:32:16.178+00:00',
-					comments: [],
-					content: [
-						{
-							index: 0,
-							postType: POST_TYPE.text,
-							content: 'SEOCNDS POST',
-						},
-						{
-							index: 1,
-							postType: POST_TYPE.text,
-							content: 'SECOND POST......',
-						},
-					],
-				},
-				{
-					id: 'post1',
-					isUpdated: false,
-					likeCount: 0,
-					isLikedByUser: false,
-					createdTime: '2020-11-10T02:32:16.178+00:00',
-					comments: [
-						{
-							id: 'post1comment1',
-							author: {
-								bio: 'lalala',
-								id: 'fakeuser1',
-								name: 'fake user',
-								profilePicture:
-									'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
-								isFriendsWithAuthUser: true,
-								username: 'fakseuser',
-							},
-							content: 'this is my own post',
-							createdTime: '2020-11-16T02:35:41+00:00',
-						},
-						{
-							id: 'post1comment2',
-							author: {
-								bio: 'lalala',
-								id: 'fakeuser1',
-								name: 'fake user',
-								profilePicture:
-									'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
-								isFriendsWithAuthUser: true,
-								username: 'fakseuser',
-							},
-							content:
-								'jflskdf skdfjh sdjf alksdjf askdf askldfsdjhf asjdfh asdf. ksdfh ksdj djksfh askjdf skdjhf lasdflas lasdhf\n skdhfklsaf\n',
-							createdTime: '2020-11-18T02:35:41+00:00',
-						},
-						{
-							id: 'post1comment3',
-							author: {
-								bio: 'lalala',
-								id: 'fakeuser1',
-								name: 'fake user',
-								profilePicture:
-									'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
-								isFriendsWithAuthUser: true,
-								username: 'fakseuser',
-							},
-							content:
-								'sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss',
-							createdTime: '2020-11-19T02:35:41+00:00',
-						},
-					],
-					content: [
-						{
-							index: 0,
-							postType: POST_TYPE.text,
-							content: 'Hello this is the first psot',
-						},
-						{
-							index: 1,
-							postType: POST_TYPE.text,
-							content: 'arent you glad i made this',
-						},
-					],
-				},
-			],
+			payload: mockProfiles[id]
 		});
 	};
 
@@ -279,6 +195,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 			payload: id,
 		});
 	};
+
 	const unlikePost = (jwt: string, id: string) => {
 		// TODO: write request to unlike post
 		profileDispatch({

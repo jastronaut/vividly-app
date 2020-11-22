@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import { AuthUser } from './types';
+import { mockAuthUser, testToken } from './mockData';
 
 type AuthState = {
 	authUser: AuthUser | null;
@@ -184,27 +185,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 		// attemptLogin();
 
 		const fakeLogin = async () => {
-			const testUser = {
-				id: '0',
-				name: 'Very Cool User ✨',
-				username: 'coolestusername',
-				bio: "I love using Peached even if it doesn't work",
-				profilePicture: '',
-				emailVerified: true,
-				email: 'test@test.com',
-				blockedWords: [],
-				friends: [],
-			};
-
-			const testToken = 'Fake.JWT.Lol';
-
 			await AsyncStorage.setItem('@jwt', testToken);
-			await AsyncStorage.setItem('@authUser', JSON.stringify(testUser));
+			await AsyncStorage.setItem('@authUser', JSON.stringify(mockAuthUser));
 
 			authDispatch({
 				type: AUTH_ACTIONS.GET_USER,
 				payload: {
-					authUser: testUser,
+					authUser: mockAuthUser,
 					jwt: testToken,
 				},
 			});

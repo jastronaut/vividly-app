@@ -9,7 +9,6 @@ type HomeStackParamList = {
 		user: FriendUser;
 		index: number;
 	};
-	Search: undefined;
 	PostPage: {
 		post: Post;
 		user: FriendUser;

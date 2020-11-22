@@ -7,10 +7,8 @@ import { StatusBar } from 'react-native';
 import ScreenLoadingIndicator from '../components/ScreenLoadingIndicator';
 import Login from '../Login';
 import Home from '../Home';
-import Search from '../Home/Search';
 import UserProfile from '../UserProfile';
 import PostPage from '../PostPage';
-import MyPage from '../UserProfile/MyPage';
 import AppSettings from '../AppSettings';
 
 import { AuthContext } from '../AuthProvider';
@@ -59,15 +57,6 @@ const Routes = () => {
 										...navHeaderStyles,
 									}}
 									component={PostPage}
-								/>
-
-								<HomeStack.Screen
-									name='Search'
-									options={{
-										headerTransparent: true,
-										headerTitle: '',
-									}}
-									component={Search}
 								/>
 							</HomeStack.Navigator>
 						</NavigationContainer>

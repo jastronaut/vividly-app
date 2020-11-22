@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, ReactNode } from 'react';
 
-import { FeedPreview, POST_TYPE } from './types';
+import { FeedPreview } from './types';
+import { mockFeed } from './mockData';
 
 type FeedState = {
 	feed: FeedPreview[];
@@ -117,66 +118,7 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 		// requestFeed();
 		feedDispatch({
 			type: FEED_ACTIONS.GET_FEED,
-
-			payload: [
-				{
-					newestPost: {
-						id: 'fakepost1',
-						createdTime: '2020-11-13T02:32:16.178+00:00',
-						// createdTime: '2020-11-10T00:00:00+00:00',
-						content: {
-							index: 0,
-							postType: POST_TYPE.text,
-							content: 'this post isnt real',
-						},
-					},
-					user: {
-						bio: 'FIRSTUSER',
-						id: 'user1',
-						isFavorite: true,
-						name: 'FIRSTFAKEUSERr',
-						profilePicture:
-							'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
-						unreadPosts: 3,
-						username: 'fakeuser1',
-					},
-				},
-				{
-					newestPost: {
-						id: 'fakepost1',
-						createdTime: '2020-11-13T02:32:16.178+00:00',
-						// createdTime: '2020-11-10T00:00:00+00:00',
-						content: {
-							index: 0,
-							postType: POST_TYPE.text,
-							content: 'this post isnt real',
-						},
-					},
-					user: {
-						bio: 'lalala',
-						id: 'fakeuser1',
-						isFavorite: false,
-						name: 'fake user',
-						profilePicture:
-							'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
-						unreadPosts: 1,
-						username: 'fakseuser',
-					},
-				},
-				{
-					newestPost: null,
-					user: {
-						bio: '',
-						id: '5fada94b9b1559ae5e4ca5e6',
-						isFavorite: false,
-						name: 'the god',
-						profilePicture:
-							'https://peachedstorage.blob.core.windows.net/profilepics/default.png',
-						unreadPosts: 0,
-						username: 'admin',
-					},
-				},
-			],
+			payload: mockFeed
 		});
 	};
 
