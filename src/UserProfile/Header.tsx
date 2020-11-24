@@ -2,7 +2,7 @@ import React from 'react';
 import { Text } from 'react-native';
 import styled from 'styled-components/native';
 
-import { FriendUser } from '../types';
+import { BaseUser } from '../types';
 
 const UserInfoContainer = styled.View`
 	display: flex;
@@ -37,12 +37,8 @@ const Bio = styled.Text`
 	color: ${({ theme }) => theme.colors.main.fg};
 `;
 
-type HeaderProps = {
-	user: FriendUser;
-};
-
-const Header = (props: HeaderProps) => {
-	const { user } = props;
+const Header = (props: BaseUser) => {
+	const { name, username, bio } = props;
 
 	return (
 		<UserInfoContainer>
@@ -52,10 +48,10 @@ const Header = (props: HeaderProps) => {
 				/>
 			</ProfilePictureContainer>
 			<NamesContainer>
-				<Name>{user.name}</Name>
-				<Username>@{user.username}</Username>
+				<Name>{name}</Name>
+				<Username>@{username}</Username>
 			</NamesContainer>
-			<Bio>{user.bio}</Bio>
+			<Bio>{bio}</Bio>
 		</UserInfoContainer>
 	);
 };

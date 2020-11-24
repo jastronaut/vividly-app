@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 
 import Button from '../components/Button';
 
@@ -12,7 +12,7 @@ const AppSettings = () => {
 	const { authState, logout } = useContext(AuthContext);
 	const { authUser } = authState;
 
-	if (!authUser) return;
+	if (!authUser) return null;
 
 	return (
 		<ScreenContainer>

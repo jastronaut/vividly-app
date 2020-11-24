@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { RefObject } from 'react';
 import styled from 'styled-components/native';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 
 import { Post } from '../types';
 import PostPreview from './PostPreview';
@@ -18,11 +18,11 @@ const createProfilePost = ({
 }) => (item ? <PostPreview post={item} onPressPost={onPressPost} /> : null);
 
 type PostsListProps = {
-	postListRef: any;
-	isRefreshing: boolean;
+	postListRef: RefObject<FlatList>;
+	isRefreshing: boolean | null;
 	posts: Post[];
 	onPressPost: Function;
-	onRefreshPage: () => void;
+	onRefreshPage: (() => void) | null;
 };
 
 const PostsList = (props: PostsListProps) => {

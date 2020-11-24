@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
+import { FlatList } from 'react-native';
 
 import ProfileProvider, { ProfileContext } from './ProfileProvider';
 import { FeedContext } from '../FeedProvider';
@@ -26,7 +27,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	);
 	const [numUnreadPosts, setNumUnreadPosts] = useState<number>(0);
 	const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-	const postListRef = useRef(null);
+	const postListRef = useRef<FlatList>(null);
 
 	useEffect(() => {
 		const user = route.params.user;
@@ -66,7 +67,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const onPressUnreadBanner = () => {
 		if (postListRef && postListRef.current) {
 			postListRef!.current!.scrollToIndex({
-				index: numUnreadPosts,
+				index: numUnreadPosts - 1,
 				viewPosition: 1,
 			});
 			setIsUnreadBannerShowing(false);
@@ -84,7 +85,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 		<>
 			{isProfileLoading ? <ScreenLoadingIndicator /> : null}
 			<ScreenContainer>
-				<Header user={user} />
+				<Header {...user} />
 				<UnreadBanner
 					numUnreadPosts={numUnreadPosts}
 					onPress={onPressUnreadBanner}

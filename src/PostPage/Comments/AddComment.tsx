@@ -4,9 +4,7 @@ import {
 	Text,
 	View,
 	TextInput,
-	Platform,
 	Dimensions,
-	KeyboardAvoidingView,
 } from 'react-native';
 
 import Button from '../../components/Button';
