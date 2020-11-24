@@ -44,7 +44,7 @@ const Home = ({ navigation }: HomeProps) => {
 	};
 
 	const onPressAuthUserPreview = () => {
-		console.log('TODO');
+		navigation.navigate('AuthUserProfile');
 	}
 
 	return (

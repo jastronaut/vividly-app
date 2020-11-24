@@ -15,6 +15,7 @@ type ProfileContextType = {
 	unlikePost: Function;
 	addComment: Function;
 	deleteComment: Function;
+	setPosts: Function;
 };
 
 export const ProfileContext = createContext<ProfileContextType>({
@@ -27,6 +28,7 @@ export const ProfileContext = createContext<ProfileContextType>({
 	unlikePost: () => null,
 	addComment: () => null,
 	deleteComment: () => null,
+	setPosts: () => null
 });
 
 enum PROFILE_ACTIONS {
@@ -188,6 +190,16 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
+	const setPosts = (posts: Post[]) => {
+		profileDispatch({
+			type: PROFILE_ACTIONS.POSTS_LOADING,
+		});
+		profileDispatch({
+			type: PROFILE_ACTIONS.GET_POSTS,
+			payload: posts
+		});
+	}
+
 	const likePost = (jwt: string, id: string) => {
 		// TODO: write request to like post
 		profileDispatch({
@@ -251,6 +263,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 					unlikePost,
 					addComment,
 					deleteComment,
+					setPosts
 				}}>
 				{children}
 			</ProfileContext.Provider>

@@ -5,10 +5,11 @@ import { Pressable, PressableProps, View, Text } from 'react-native';
 type ButtonProps = {
 	size?: 'small' | 'large' | 'normal';
 	color?: string;
+	disabled?: boolean;
 };
 
 const ButtonWrapper = styled.View<ButtonProps>`
-	background-color: ${({ theme, color }) => color ?? theme.accentColor};
+	background-color: ${({ theme, color, disabled }) => disabled ? theme.colors.muted.bg : (color ?? theme.accentColor)};
 	padding: ${ ({size}) => size === 'normal' ? '5px 10px' : (size === 'large' ? '10px 15px' : '2px 5px')};
 	border-radius: 5px;
 `;
@@ -19,10 +20,10 @@ const ButtonText = styled.Text`
 `;
 
 const Button = (props: ButtonProps & PressableProps) => {
-	const { children, size='normal', color, ...rest } = props;
+	const { children, size='normal', color, disabled=false, ...rest } = props;
 	return (
-		<Pressable {...rest}>
-			<ButtonWrapper size={size} color={color}>
+		<Pressable {...rest} disabled={disabled}>
+			<ButtonWrapper size={size} color={color} disabled={disabled}>
 				<ButtonText>{children}</ButtonText>
 			</ButtonWrapper>
 		</Pressable>

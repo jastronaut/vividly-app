@@ -8,14 +8,64 @@ import ScreenLoadingIndicator from '../components/ScreenLoadingIndicator';
 import Login from '../Login';
 import Home from '../Home';
 import UserProfile from '../UserProfile';
+import AuthUserProfile from '../UserProfile/AuthUserProfile';
 import PostPage from '../PostPage';
 import AppSettings from '../AppSettings';
+import AddPost from '../UserProfile/AuthUserProfile/AddPost';
 
 import { AuthContext } from '../AuthProvider';
 import { ThemeContext } from 'styled-components/native';
 import FeedProvider from '../FeedProvider';
 
 const HomeStack = createStackNavigator();
+const RootStack = createStackNavigator();
+
+const HomeRoutes = () => {
+	const { authUser } = useContext(AuthContext).authState;
+	const { navHeaderStyles } = useContext(ThemeContext);
+	if (!authUser) return null;
+
+	return (
+		<HomeStack.Navigator>
+			<HomeStack.Screen
+				name='Home'
+				component={Home}
+				options={{ headerShown: false }}
+			/>
+			<HomeStack.Screen
+				name='AppSettings'
+				component={AppSettings}
+				options={{ title: 'App Settings', ...navHeaderStyles }}
+			/>
+
+			<HomeStack.Screen
+				name='UserProfile'
+				component={UserProfile}
+				options={({ route }) => ({
+					title: `${route.params.user.name}`,
+					...navHeaderStyles,
+				})}
+			/>
+
+			<HomeStack.Screen
+				name='AuthUserProfile'
+				component={AuthUserProfile}
+				options={{
+					title: authUser.name,
+					...navHeaderStyles,
+				}}
+			/>
+			<HomeStack.Screen
+				name='PostPage'
+				options={{
+					title: 'Post',
+					...navHeaderStyles,
+				}}
+				component={PostPage}
+			/>
+		</HomeStack.Navigator>
+	);
+};
 
 const Routes = () => {
 	const { authState } = useContext(AuthContext);
@@ -30,35 +80,18 @@ const Routes = () => {
 				{authState.isAuthInitFinished ? (
 					authState.authUser && authState.jwt ? (
 						<NavigationContainer>
-							<HomeStack.Navigator>
-								<HomeStack.Screen
-									name='Home'
-									component={Home}
+							<RootStack.Navigator mode='modal'>
+								<RootStack.Screen
+									name='Main'
+									component={HomeRoutes}
 									options={{ headerShown: false }}
 								/>
-								<HomeStack.Screen
-									name='AppSettings'
-									component={AppSettings}
-									options={navHeaderStyles}
+								<RootStack.Screen
+									name='AddPost'
+									component={AddPost}
+									options={{headerBackTitle: 'Back', ...navHeaderStyles }}
 								/>
-
-								<HomeStack.Screen
-									name='UserProfile'
-									component={UserProfile}
-									options={({ route }) => ({
-										title: `${route.params.user.name}'s Page`,
-										...navHeaderStyles,
-									})}
-								/>
-								<HomeStack.Screen
-									name='PostPage'
-									options={{
-										title: 'Post',
-										...navHeaderStyles,
-									}}
-									component={PostPage}
-								/>
-							</HomeStack.Navigator>
+							</RootStack.Navigator>
 						</NavigationContainer>
 					) : (
 						<Login />

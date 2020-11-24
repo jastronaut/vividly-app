@@ -1,6 +1,6 @@
 import { StackScreenProps } from '@react-navigation/stack';
 
-import { FriendUser, Post } from '../types';
+import { FriendUser, BaseUser, Post } from '../types';
 
 // routes
 type HomeStackParamList = {
@@ -11,9 +11,11 @@ type HomeStackParamList = {
 	};
 	PostPage: {
 		post: Post;
-		user: FriendUser;
+		user: BaseUser;
 	};
 	AppSettings: undefined;
+	AuthUserProfile: undefined;
+	AddPost: undefined;
 };
 
 export type UserProfileProps = StackScreenProps<
