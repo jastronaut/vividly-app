@@ -35,22 +35,18 @@ const PostsList = (props: PostsListProps) => {
 	} = props;
 
 	return (
-		<DebugContainer>
-			<FlatList<Post>
-				style={{
-					height: '80%',
-				}}
-				ref={postListRef}
-				inverted={true}
-				refreshing={isRefreshing}
-				data={posts}
-				renderItem={({ item, index }: { item: Post; index: number }) =>
-					createProfilePost({ item, index, onPressPost })
-				}
-				keyExtractor={(post: Post) => post.id.toString()}
-				onRefresh={onRefreshPage}
-			/>
-		</DebugContainer>
+		<FlatList<Post>
+			style={{ marginBottom: 40 }}
+			ref={postListRef}
+			inverted={true}
+			refreshing={isRefreshing}
+			data={posts}
+			renderItem={({ item, index }: { item: Post; index: number }) =>
+				createProfilePost({ item, index, onPressPost })
+			}
+			keyExtractor={(post: Post) => post.id.toString()}
+			onRefresh={onRefreshPage}
+		/>
 	);
 };
 

@@ -4,7 +4,7 @@ import styled from 'styled-components/native';
 
 const AddPostButtonWrapper = styled.View`
 	position: absolute;
-	bottom: -5%;
+	bottom: 50px;
 	right: 5%;
 	width: 50px;
 	height: 50px;

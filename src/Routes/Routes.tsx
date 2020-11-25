@@ -16,6 +16,7 @@ import AddPost from '../UserProfile/AuthUserProfile/AddPost';
 import { AuthContext } from '../AuthProvider';
 import { ThemeContext } from 'styled-components/native';
 import FeedProvider from '../FeedProvider';
+import ProfileProvider from '../UserProfile/ProfileProvider';
 
 const HomeStack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -73,33 +74,40 @@ const Routes = () => {
 
 	return (
 		<FeedProvider>
-			<SafeAreaProvider>
-				<StatusBar
-					barStyle={isLightMode ? 'dark-content' : 'light-content'}
-				/>
-				{authState.isAuthInitFinished ? (
-					authState.authUser && authState.jwt ? (
-						<NavigationContainer>
-							<RootStack.Navigator mode='modal'>
-								<RootStack.Screen
-									name='Main'
-									component={HomeRoutes}
-									options={{ headerShown: false }}
-								/>
-								<RootStack.Screen
-									name='AddPost'
-									component={AddPost}
-									options={{headerBackTitle: 'Back', ...navHeaderStyles }}
-								/>
-							</RootStack.Navigator>
-						</NavigationContainer>
+			<ProfileProvider>
+				<SafeAreaProvider>
+					<StatusBar
+						barStyle={
+							isLightMode ? 'dark-content' : 'light-content'
+						}
+					/>
+					{authState.isAuthInitFinished ? (
+						authState.authUser && authState.jwt ? (
+							<NavigationContainer>
+								<RootStack.Navigator mode='modal'>
+									<RootStack.Screen
+										name='Main'
+										component={HomeRoutes}
+										options={{ headerShown: false }}
+									/>
+									<RootStack.Screen
+										name='AddPost'
+										component={AddPost}
+										options={{
+											headerBackTitle: 'Back',
+											...navHeaderStyles,
+										}}
+									/>
+								</RootStack.Navigator>
+							</NavigationContainer>
+						) : (
+							<Login />
+						)
 					) : (
-						<Login />
-					)
-				) : (
-					<ScreenLoadingIndicator />
-				)}
-			</SafeAreaProvider>
+						<ScreenLoadingIndicator />
+					)}
+				</SafeAreaProvider>
+			</ProfileProvider>
 		</FeedProvider>
 	);
 };

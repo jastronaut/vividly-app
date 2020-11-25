@@ -1,6 +1,5 @@
-
-import React  from 'react';
-import {  Pressable } from 'react-native';
+import React from 'react';
+import { Pressable } from 'react-native';
 
 import {
 	ProfilePicPreview,
@@ -8,9 +7,9 @@ import {
 	PreviewRight,
 	PreviewName,
 	PreviewText,
-	PostPreviewContent
+	PostPreviewContent,
 } from './styles';
-import { FeedPreview,  PostContent } from '../types';
+import { FeedPreview, PostContent } from '../types';
 import formatPostTime from '../utils/formatPostTime';
 
 const formatPreview = (preview: PostContent) => {
@@ -32,13 +31,15 @@ export type FeedPreviewComponentProps = {
 	feedPreview: FeedPreview;
 	index: number;
 	onPress: Function;
-}
+};
 
-const FeedPreviewComponent = ({ feedPreview, index, onPress}: FeedPreviewComponentProps) => (
+const FeedPreviewComponent = ({
+	feedPreview,
+	index,
+	onPress,
+}: FeedPreviewComponentProps) => (
 	// TODO: favorites indicator
-	<Pressable
-		key={feedPreview.user.id}
-		onPress={() => onPress(feedPreview.user, index)}>
+	<Pressable onPress={() => onPress(feedPreview.user, index)}>
 		{({ pressed }) => (
 			<PostPreviewContainer isPressed={pressed}>
 				<ProfilePicPreview source={require('./pup.jpg')} />
@@ -46,14 +47,16 @@ const FeedPreviewComponent = ({ feedPreview, index, onPress}: FeedPreviewCompone
 					<PreviewName>{feedPreview.user.name}</PreviewName>
 					{feedPreview.newestPost ? (
 						<PostPreviewContent>
-						<PreviewText>
-							{feedPreview.user.unreadPosts ? '🟢 ' : ''}
-							{formatPreview(feedPreview.newestPost.content)}
-						</PreviewText>
-				<PreviewText>
-					{feedPreview.newestPost &&
-						formatPostTime(feedPreview.newestPost.createdTime)}
-				</PreviewText>
+							<PreviewText>
+								{feedPreview.user.unreadPosts ? '🟢 ' : ''}
+								{formatPreview(feedPreview.newestPost.content)}
+							</PreviewText>
+							<PreviewText>
+								{feedPreview.newestPost &&
+									formatPostTime(
+										feedPreview.newestPost.createdTime,
+									)}
+							</PreviewText>
 						</PostPreviewContent>
 					) : null}
 				</PreviewRight>

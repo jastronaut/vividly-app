@@ -29,7 +29,7 @@ const CommentsContainer = ({ comments }: CommentsContainerProps) => {
 	}
 
 	return (
-		<View>
+		<View style={{ marginBottom: '20%' }}>
 			{comments.map((comment) => (
 				<SingleComment key={comment.id} comment={comment} />
 			))}

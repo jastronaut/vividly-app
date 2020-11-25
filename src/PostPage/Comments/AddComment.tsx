@@ -1,23 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components/native';
-import {
-	Text,
-	View,
-	TextInput,
-	Dimensions,
-} from 'react-native';
+import { Text, View, TextInput, Dimensions } from 'react-native';
 
 import Button from '../../components/Button';
 import CommentsContainer from './CommentsContainer';
 
 const Container = styled.View<{ isInputFocused: boolean }>`
 	position: absolute;
-	bottom: ${({ isInputFocused }) => (isInputFocused ? '90px' : '20px')};
+	min-height: 50px;
+	bottom: ${({ isInputFocused }) => (isInputFocused ? '90px' : '0px')};
 	width: ${Dimensions.get('screen').width}px;
 	background-color: ${({ theme }) => theme.colors.main.bg};
 	display: flex;
-	padding: 2% 5% 3%;
+	padding: 2% 5% 8%;
 	flex-direction: row;
+	align-items: flex-start;
 	justify-content: space-between;
 	max-height: ${Dimensions.get('screen').height / 4}px;
 	border-top-width: 1px;
@@ -26,7 +23,7 @@ const Container = styled.View<{ isInputFocused: boolean }>`
 
 const ButtonStyled = styled(Button)`
 	width: 100%;
-	padding: 0px;
+	padding: 2% 1%;
 `;
 
 const Input = styled.TextInput.attrs(({ theme }) => ({

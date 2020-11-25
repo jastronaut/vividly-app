@@ -7,13 +7,14 @@ import {
 	PostInteractionContainer,
 	PostMetaText,
 } from '../UserProfile/PostPreview/styles';
-import { Username, DisplayName, TextMain, Avatar } from './styles';
+import { Username, DisplayName, Avatar } from './styles';
 import formatPostTime from '../utils/formatPostTime';
 import { Heart } from '../components/Icons/Heart';
 import { Comment } from '../components/Icons/Comment';
+import { renderPostContent } from '../UserProfile/PostPreview/PostPreview';
 
 const PostStyled = styled.View`
-	padding: 5% 4%;
+	padding: 5% 0;
 	border-bottom-width: 1px;
 	border-bottom-color: #aaa;
 `;
@@ -48,11 +49,7 @@ const PostContainer = ({ user, post }: PostContainerProps) => {
 				</OPNamesContainer>
 			</OPHeader>
 			<View>
-				{post.content.map((c: PostContent) => (
-					<TextMain key={post.id + '-' + c.index}>
-						{c.content}
-					</TextMain>
-				))}
+				{post.content.map((c: PostContent) => renderPostContent(c))}
 			</View>
 			<PostInteractionContainer>
 				<Heart isLiked={post.isLikedByUser} />

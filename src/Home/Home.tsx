@@ -7,10 +7,7 @@ import { FeedContext } from '../FeedProvider';
 import { FeedPreview, FriendUser } from '../types';
 
 import Header from './Header';
-import {
-	FeedList,
-	StyledSAV,
-} from './styles';
+import { FeedList, StyledSAV } from './styles';
 import { ScreenContainer } from '../styles';
 import FeedPreviewComponent from './FeedPreviewComponent';
 
@@ -29,7 +26,7 @@ const renderFriendPreview = (
 const Home = ({ navigation }: HomeProps) => {
 	const { authState } = useContext(AuthContext);
 	const { feedState, getFeed } = useContext(FeedContext);
-	const { isFeedLoading, feed } = feedState;
+	const { isFeedLoading, feed, authUserFeed } = feedState;
 	const [friendQuery, setFriendQuery] = useState<string>('');
 
 	useEffect(() => {
@@ -45,17 +42,22 @@ const Home = ({ navigation }: HomeProps) => {
 
 	const onPressAuthUserPreview = () => {
 		navigation.navigate('AuthUserProfile');
-	}
+	};
 
 	return (
 		<StyledSAV>
 			<ScreenContainer>
-				<Header
-					friendQuery={friendQuery}
-					setFriendQuery={setFriendQuery}
-					onPressSettings={() => navigation.navigate('AppSettings')}
-					onPressAuthUserPreview={onPressAuthUserPreview}
-				/>
+				{isFeedLoading || !authUserFeed ? null : (
+					<Header
+						friendQuery={friendQuery}
+						setFriendQuery={setFriendQuery}
+						onPressSettings={() =>
+							navigation.navigate('AppSettings')
+						}
+						onPressAuthUserPreview={onPressAuthUserPreview}
+						authUserFeed={authUserFeed}
+					/>
+				)}
 				<FeedList>
 					{isFeedLoading ? (
 						<Text>Loading</Text>
