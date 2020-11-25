@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Pressable } from 'react-native';
 
 import { Post, PostContent } from '../../types';
 import formatPostTime from '../../utils/formatPostTime';
+import { ProfileContext } from '../ProfileProvider';
 
 import {
 	PostWrapper,
@@ -41,13 +42,17 @@ type PostPreviewProps = {
 };
 
 const PostPreview = ({ post, onPressPost }: PostPreviewProps) => {
+	const { toggleLikePost } = useContext(ProfileContext);
+
 	return (
 		<Pressable onPress={() => onPressPost(post)}>
 			{({ pressed }) => (
 				<PostWrapper isPressed={pressed}>
 					<View>{post.content.map((c) => renderPostContent(c))}</View>
 					<PostInteractionContainer>
+						<Pressable onPress={() => toggleLikePost('fakejwt', post.id) }>
 						<Heart isLiked={post.isLikedByUser} />
+						</Pressable>
 						<PostMetaText>{post.likeCount}</PostMetaText>
 						<Comment />
 						<PostMetaText>{post.comments.length}</PostMetaText>

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components/native';
-import { Text, View } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 
+import { ProfileContext } from '../UserProfile/ProfileProvider';
 import { FriendUser, Post, PostContent } from '../types';
 import {
 	PostInteractionContainer,
@@ -39,6 +40,8 @@ type PostContainerProps = {
 };
 
 const PostContainer = ({ user, post }: PostContainerProps) => {
+	const { toggleLikePost } = useContext(ProfileContext);
+
 	return (
 		<PostStyled>
 			<OPHeader>
@@ -52,7 +55,9 @@ const PostContainer = ({ user, post }: PostContainerProps) => {
 				{post.content.map((c: PostContent) => renderPostContent(c))}
 			</View>
 			<PostInteractionContainer>
-				<Heart isLiked={post.isLikedByUser} />
+				<Pressable onPress={() => toggleLikePost('fakejwt', post.id)}>
+					<Heart isLiked={post.isLikedByUser} />
+				</Pressable>
 				<PostMetaText>{post.likeCount}</PostMetaText>
 				<Comment />
 				<PostMetaText>{post.comments.length}</PostMetaText>

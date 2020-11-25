@@ -11,8 +11,7 @@ type ProfileState = {
 type ProfileContextType = {
 	state: ProfileState;
 	getPosts: Function;
-	likePost: Function;
-	unlikePost: Function;
+	toggleLikePost: Function;
 	addComment: Function;
 	deleteComment: Function;
 	addPost: Function;
@@ -24,8 +23,7 @@ export const ProfileContext = createContext<ProfileContextType>({
 		isProfileLoading: false,
 	},
 	getPosts: () => null,
-	likePost: () => null,
-	unlikePost: () => null,
+	toggleLikePost: () => null,
 	addComment: () => null,
 	deleteComment: () => null,
 	addPost: (jwt: string, postContent: PostContent[]) => null,
@@ -33,12 +31,11 @@ export const ProfileContext = createContext<ProfileContextType>({
 
 enum PROFILE_ACTIONS {
 	GET_POSTS,
-	LIKE_POST,
-	UNLIKE_POST,
 	POSTS_LOADING,
 	ADD_COMMENT,
 	DELETE_COMMENT,
 	ADD_POST,
+	TOGGLE_LIKE_POST
 }
 
 type GetPostsAction = {
@@ -46,13 +43,8 @@ type GetPostsAction = {
 	payload: Post[];
 };
 
-type LikePostAction = {
-	type: typeof PROFILE_ACTIONS.LIKE_POST;
-	payload: string;
-};
-
-type UnlikePostAction = {
-	type: typeof PROFILE_ACTIONS.UNLIKE_POST;
+type ToggleLikePostAction = {
+	type: typeof PROFILE_ACTIONS.TOGGLE_LIKE_POST;
 	payload: string;
 };
 
@@ -84,8 +76,7 @@ type AddPostAction = {
 
 type ProfileActions =
 	| GetPostsAction
-	| LikePostAction
-	| UnlikePostAction
+	| ToggleLikePostAction
 	| PostsLoadingAction
 	| AddCommentAction
 	| DeleteCommentAction
@@ -98,23 +89,17 @@ function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 				posts: action.payload,
 				isProfileLoading: false,
 			};
-		case PROFILE_ACTIONS.LIKE_POST:
+		case PROFILE_ACTIONS.TOGGLE_LIKE_POST:
 			return {
 				posts: state.posts.map((post) => {
 					if (post.id === action.payload) {
-						post.isLikedByUser = true;
-						post.likeCount++;
-					}
-					return post;
-				}),
-				isProfileLoading: false,
-			};
-		case PROFILE_ACTIONS.UNLIKE_POST:
-			return {
-				posts: state.posts.map((post) => {
-					if (post.id === action.payload) {
-						post.isLikedByUser = false;
-						post.likeCount--;
+						if (post.isLikedByUser) {
+							post.isLikedByUser = false;
+							post.likeCount--;
+						} else {
+							post.isLikedByUser = true;
+							post.likeCount++;
+						}
 					}
 					return post;
 				}),
@@ -202,18 +187,10 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
-	const likePost = (jwt: string, id: string) => {
-		// TODO: write request to like post
+	const toggleLikePost = (jwt: string, id: string) => {
+		// TODO: write request to like/unlike post
 		profileDispatch({
-			type: PROFILE_ACTIONS.LIKE_POST,
-			payload: id,
-		});
-	};
-
-	const unlikePost = (jwt: string, id: string) => {
-		// TODO: write request to unlike post
-		profileDispatch({
-			type: PROFILE_ACTIONS.UNLIKE_POST,
+			type: PROFILE_ACTIONS.TOGGLE_LIKE_POST,
 			payload: id,
 		});
 	};
@@ -277,8 +254,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 				value={{
 					state,
 					getPosts,
-					likePost,
-					unlikePost,
+					toggleLikePost,
 					addComment,
 					deleteComment,
 					addPost,
