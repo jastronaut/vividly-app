@@ -61,12 +61,26 @@ export interface Post extends BasePost {
 	comments: Comment[];
 	content: PostContent[];
 }
-
-export interface PostContent {
+export interface TextPost {
 	index: number;
-	postType: POST_TYPE;
+	postType: typeof POST_TYPE.text;
 	content: string;
 }
+export interface LinkPost {
+	index: number;
+	postType: typeof POST_TYPE.link;
+	content: string;
+}
+
+export interface ImagePost {
+	index: number;
+	postType: typeof POST_TYPE.image;
+	content: string;
+	width: number;
+	height: number;
+}
+
+export type PostContent = TextPost | ImagePost | LinkPost;
 
 export interface Comment {
 	id: string;

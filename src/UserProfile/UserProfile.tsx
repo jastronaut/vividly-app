@@ -107,11 +107,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 };
 
 const UserProfile = ({ navigation, route }: UserProfileProps) => {
-	return (
-		<ProfileProvider>
-			<UserProfileComponent navigation={navigation} route={route} />
-		</ProfileProvider>
-	);
+	return <UserProfileComponent navigation={navigation} route={route} />;
 };
 
 export default UserProfile;

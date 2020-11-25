@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { KeyboardAvoidingView } from 'react-native';
+import { KeyboardAvoidingView, Image } from 'react-native';
 
 import ProfileProvider, { ProfileContext } from '../ProfileProvider';
 import { AuthContext } from '../../AuthProvider';
@@ -10,11 +10,10 @@ import PostsList from '../PostsList';
 import { AuthUser, FriendUser, Post } from '../../types';
 import { UserProfileProps } from '../../Routes/interfaces';
 import { ScreenContainer } from '../styles';
-import AddPost from './AddPost';
 import { AddPostButton } from './styles';
 
 const AuthUserProfileComponent = ({ navigation, route }: UserProfileProps) => {
-	const { state, setPosts } = useContext(ProfileContext);
+	const { state, getPosts } = useContext(ProfileContext);
 	const { posts, isProfileLoading } = state;
 	const { jwt, authUser } = useContext(AuthContext).authState;
 	if (!authUser) return null;
@@ -37,39 +36,33 @@ const AuthUserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	};
 
 	useEffect(() => {
-		setPosts(authUser.posts);
+		getPosts(jwt, authUser.id);
 	}, []);
 
 	return (
 		<>
 			{isProfileLoading ? <ScreenLoadingIndicator /> : null}
+			<ScreenContainer withoutPadding>
+				<Header {...baseAuthUser} />
 
-			<KeyboardAvoidingView keyboardVerticalOffset={0} behavior='height'>
-				<ScreenContainer>
-					<Header {...baseAuthUser} />
+				{!isProfileLoading && (
+					<PostsList
+						onRefreshPage={null}
+						posts={posts}
+						isRefreshing={null}
+						onPressPost={onPressPost}
+						postListRef={postListRef}
+					/>
+				)}
+			</ScreenContainer>
 
-					{!isProfileLoading && (
-						<PostsList
-							onRefreshPage={null}
-							posts={posts}
-							isRefreshing={null}
-							onPressPost={onPressPost}
-							postListRef={postListRef}
-						/>
-					)}
-					<AddPostButton onPress={() => navigation.navigate('AddPost')} />
-				</ScreenContainer>
-			</KeyboardAvoidingView>
+			<AddPostButton onPress={() => navigation.navigate('AddPost')} />
 		</>
 	);
 };
 
 const AuthUserProfile = ({ navigation, route }: UserProfileProps) => {
-	return (
-		<ProfileProvider>
-			<AuthUserProfileComponent navigation={navigation} route={route} />
-		</ProfileProvider>
-	);
+	return <AuthUserProfileComponent navigation={navigation} route={route} />;
 };
 
 export default AuthUserProfile;

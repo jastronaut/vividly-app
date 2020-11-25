@@ -1,4 +1,5 @@
 import React from 'react';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
 import AuthProvider from './AuthProvider';
 import ThemeProvider from './ThemeProvider';
@@ -9,7 +10,9 @@ export default function App() {
 	return (
 		<AuthProvider>
 			<ThemeProvider>
-				<Routes />
+				<ActionSheetProvider>
+					<Routes />
+				</ActionSheetProvider>
 			</ThemeProvider>
 		</AuthProvider>
 	);

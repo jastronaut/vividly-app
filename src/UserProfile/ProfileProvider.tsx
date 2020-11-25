@@ -1,6 +1,6 @@
 import React, { useReducer, createContext, ReactNode } from 'react';
 
-import { Post, Comment, AuthUser } from '../types';
+import { Post, Comment, AuthUser, PostContent } from '../types';
 import { mockProfiles } from '../mockData';
 
 type ProfileState = {
@@ -15,7 +15,7 @@ type ProfileContextType = {
 	unlikePost: Function;
 	addComment: Function;
 	deleteComment: Function;
-	setPosts: Function;
+	addPost: Function;
 };
 
 export const ProfileContext = createContext<ProfileContextType>({
@@ -28,7 +28,7 @@ export const ProfileContext = createContext<ProfileContextType>({
 	unlikePost: () => null,
 	addComment: () => null,
 	deleteComment: () => null,
-	setPosts: () => null
+	addPost: (jwt: string, postContent: PostContent[]) => null,
 });
 
 enum PROFILE_ACTIONS {
@@ -38,6 +38,7 @@ enum PROFILE_ACTIONS {
 	POSTS_LOADING,
 	ADD_COMMENT,
 	DELETE_COMMENT,
+	ADD_POST,
 }
 
 type GetPostsAction = {
@@ -76,13 +77,19 @@ type DeleteCommentAction = {
 	};
 };
 
+type AddPostAction = {
+	type: typeof PROFILE_ACTIONS.ADD_POST;
+	payload: Post;
+};
+
 type ProfileActions =
 	| GetPostsAction
 	| LikePostAction
 	| UnlikePostAction
 	| PostsLoadingAction
 	| AddCommentAction
-	| DeleteCommentAction;
+	| DeleteCommentAction
+	| AddPostAction;
 
 function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 	switch (action.type) {
@@ -141,6 +148,11 @@ function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 				}),
 				isProfileLoading: false,
 			};
+		case PROFILE_ACTIONS.ADD_POST:
+			return {
+				...state,
+				posts: [action.payload].concat(state.posts),
+			};
 		default:
 			return state;
 	}
@@ -152,7 +164,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		isProfileLoading: false,
 	});
 
-	const getPosts = (jwt: string, id: string, startingPostIndex=0) => {
+	const getPosts = (jwt: string, id: string, startingPostIndex = 0) => {
 		profileDispatch({
 			type: PROFILE_ACTIONS.POSTS_LOADING,
 		});
@@ -186,19 +198,9 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		// fetchFeed();
 		profileDispatch({
 			type: PROFILE_ACTIONS.GET_POSTS,
-			payload: mockProfiles[id]
+			payload: mockProfiles[id],
 		});
 	};
-
-	const setPosts = (posts: Post[]) => {
-		profileDispatch({
-			type: PROFILE_ACTIONS.POSTS_LOADING,
-		});
-		profileDispatch({
-			type: PROFILE_ACTIONS.GET_POSTS,
-			payload: posts
-		});
-	}
 
 	const likePost = (jwt: string, id: string) => {
 		// TODO: write request to like post
@@ -253,6 +255,22 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
+	const addPost = (jwt: string, postContent: PostContent[]) => {
+		const mockPost: Post = {
+			id: Date.now().toString(),
+			createdTime: Date.now().toString(),
+			content: postContent,
+			isUpdated: false,
+			likeCount: 0,
+			isLikedByUser: false,
+			comments: [],
+		};
+		profileDispatch({
+			type: PROFILE_ACTIONS.ADD_POST,
+			payload: mockPost,
+		});
+	};
+
 	return (
 		<>
 			<ProfileContext.Provider
@@ -263,7 +281,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 					unlikePost,
 					addComment,
 					deleteComment,
-					setPosts
+					addPost,
 				}}>
 				{children}
 			</ProfileContext.Provider>
