@@ -27,7 +27,6 @@ export interface AuthUser extends BaseUser {
 	email: string;
 	blockedWords: string[];
 	friends: Friend[];
-	posts: Post[];
 }
 
 export interface User extends BaseUser {
@@ -66,6 +65,7 @@ export interface TextPost {
 	postType: typeof POST_TYPE.text;
 	content: string;
 }
+
 export interface LinkPost {
 	index: number;
 	postType: typeof POST_TYPE.link;

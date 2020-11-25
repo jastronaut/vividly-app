@@ -1,6 +1,6 @@
 import React, { createContext, useReducer, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
-import { AuthUser } from './types';
+import { AuthUser, Post } from './types';
 import { mockAuthUser, testToken } from './mockData';
 
 type AuthState = {
@@ -186,7 +186,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 		const fakeLogin = async () => {
 			await AsyncStorage.setItem('@jwt', testToken);
-			await AsyncStorage.setItem('@authUser', JSON.stringify(mockAuthUser));
+			await AsyncStorage.setItem(
+				'@authUser',
+				JSON.stringify(mockAuthUser),
+			);
 
 			authDispatch({
 				type: AUTH_ACTIONS.GET_USER,

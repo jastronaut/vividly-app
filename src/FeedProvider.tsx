@@ -1,10 +1,11 @@
 import React, { createContext, useReducer, ReactNode } from 'react';
 
 import { FeedPreview } from './types';
-import { mockFeed } from './mockData';
+import { mockFeed, mockAuthUserFeed } from './mockData';
 
 type FeedState = {
 	feed: FeedPreview[];
+	authUserFeed: FeedPreview | null;
 	isFeedLoading: boolean;
 };
 
@@ -20,6 +21,7 @@ export const FeedContext = createContext<FeedContextType>({
 	feedState: {
 		feed: [],
 		isFeedLoading: false,
+		authUserFeed: null,
 	},
 });
 
@@ -27,6 +29,7 @@ enum FEED_ACTIONS {
 	GET_FEED,
 	MARK_FEED_READ,
 	FEED_LOADING,
+	SET_AUTH_USER_FEED,
 }
 
 type GetFeedAction = {
@@ -44,12 +47,22 @@ type FeedLoadingAction = {
 	payload?: null;
 };
 
-type FeedActions = GetFeedAction | MarkFeedReadAction | FeedLoadingAction;
+type SetAuthUserFeedAction = {
+	type: typeof FEED_ACTIONS.SET_AUTH_USER_FEED;
+	payload: FeedPreview;
+};
+
+type FeedActions =
+	| GetFeedAction
+	| MarkFeedReadAction
+	| FeedLoadingAction
+	| SetAuthUserFeedAction;
 
 function reducer(state: FeedState, action: FeedActions): FeedState {
 	switch (action.type) {
 		case FEED_ACTIONS.GET_FEED:
 			return {
+				...state,
 				feed: action.payload,
 				isFeedLoading: false,
 			};
@@ -62,8 +75,14 @@ function reducer(state: FeedState, action: FeedActions): FeedState {
 			});
 
 			return {
+				...state,
 				feed: feed,
 				isFeedLoading: false,
+			};
+		case FEED_ACTIONS.SET_AUTH_USER_FEED:
+			return {
+				...state,
+				authUserFeed: action.payload,
 			};
 		case FEED_ACTIONS.FEED_LOADING:
 			return {
@@ -79,6 +98,7 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 	const [feedState, feedDispatch] = useReducer(reducer, {
 		feed: [],
 		isFeedLoading: false,
+		authUserFeed: null,
 	});
 
 	const getFeed = (jwt: string) => {
@@ -100,15 +120,21 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 				);
 
 				const resp = await req.json();
-				console.log('...', resp);
 
 				if (!resp || !req.status) {
 					throw Error('cant request feed');
 				}
 
+				const { friends, authUserFeed } = resp;
+
+				feedDispatch({
+					type: FEED_ACTIONS.SET_AUTH_USER_FEED,
+					payload: authUserFeed,
+				});
+
 				feedDispatch({
 					type: FEED_ACTIONS.GET_FEED,
-					payload: resp,
+					payload: friends,
 				});
 			} catch (e) {
 				console.log('error: cant fetch feed');
@@ -117,8 +143,13 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 		};
 		// requestFeed();
 		feedDispatch({
+			type: FEED_ACTIONS.SET_AUTH_USER_FEED,
+			payload: mockAuthUserFeed,
+		});
+
+		feedDispatch({
 			type: FEED_ACTIONS.GET_FEED,
-			payload: mockFeed
+			payload: mockFeed,
 		});
 	};
 
