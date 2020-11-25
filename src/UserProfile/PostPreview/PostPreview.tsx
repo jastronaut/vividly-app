@@ -1,19 +1,39 @@
 import React from 'react';
-import { Text, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
 
 import { Post, PostContent } from '../../types';
 import formatPostTime from '../../utils/formatPostTime';
 
 import {
 	PostWrapper,
-	PostContainer,
 	PostInteractionContainer,
 	PostText,
 	PostMetaText,
+	PostImage,
 } from './styles';
 
 import { Heart } from '../../components/Icons/Heart';
 import { Comment } from '../../components/Icons/Comment';
+import LinkText from '../../components/LinkText';
+
+export const renderPostContent = (preview: PostContent) => {
+	switch (preview.postType) {
+		case 'link':
+			return <LinkText key={preview.index} url={preview.content} />;
+		case 'image':
+			return (
+				<PostImage
+					key={preview.index}
+					resizeMode='contain'
+					height={preview.height}
+					width={preview.width}
+					source={{ uri: preview.content }}
+				/>
+			);
+		default:
+			return <PostText key={preview.index}>{preview.content}</PostText>;
+	}
+};
 
 type PostPreviewProps = {
 	post: Post;
@@ -21,29 +41,24 @@ type PostPreviewProps = {
 };
 
 const PostPreview = ({ post, onPressPost }: PostPreviewProps) => {
-	console.log(post.id);
 	return (
-		<PostWrapper>
-			<Pressable onPress={() => onPressPost(post)}>
-				{({ pressed }) => (
-					<PostContainer key={post.id} isPressed={pressed}>
-						{post.content.map((c: PostContent) => (
-							<PostText key={post.id + '-' + c.index}>
-								{c.content}
-							</PostText>
-						))}
-					</PostContainer>
-				)}
-			</Pressable>
-			<PostInteractionContainer>
-				<Heart isLiked={post.isLikedByUser} />
-				<PostMetaText>{post.likeCount}</PostMetaText>
-				<Comment />
-				<PostMetaText>{post.comments.length}</PostMetaText>
-				<PostMetaText>—</PostMetaText>
-				<PostMetaText>{formatPostTime(post.createdTime)}</PostMetaText>
-			</PostInteractionContainer>
-		</PostWrapper>
+		<Pressable onPress={() => onPressPost(post)}>
+			{({ pressed }) => (
+				<PostWrapper isPressed={pressed}>
+					<View>{post.content.map((c) => renderPostContent(c))}</View>
+					<PostInteractionContainer>
+						<Heart isLiked={post.isLikedByUser} />
+						<PostMetaText>{post.likeCount}</PostMetaText>
+						<Comment />
+						<PostMetaText>{post.comments.length}</PostMetaText>
+						<PostMetaText>—</PostMetaText>
+						<PostMetaText>
+							{formatPostTime(post.createdTime)}
+						</PostMetaText>
+					</PostInteractionContainer>
+				</PostWrapper>
+			)}
+		</Pressable>
 	);
 };
 
