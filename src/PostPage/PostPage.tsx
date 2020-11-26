@@ -49,18 +49,6 @@ const PostPage = ({ navigation, route }: PostPageProps) => {
 	};
 
 	useEffect(() => {
-		if (route.params.fromPage === 'profile') {
-			navigation.setOptions({
-				headerBackTitle: 'Back',
-			});
-		} else if (route.params.fromPage === 'notifications') {
-			navigation.setOptions({
-				headerBackTitle: 'Notifications',
-			});
-		}
-	}, [route.params.fromPage]);
-
-	useEffect(() => {
 		const findPost = posts.filter((p) => p.id === route.params.postId);
 		if (findPost.length < 1) return; // TODO: real error handling
 		setPost(findPost[0]);

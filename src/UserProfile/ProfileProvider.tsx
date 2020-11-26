@@ -15,6 +15,7 @@ type ProfileContextType = {
 	addComment: Function;
 	deleteComment: Function;
 	addPost: Function;
+	deletePost: Function;
 	setProfileLoading: Function;
 	clearPosts: Function;
 };
@@ -29,6 +30,7 @@ export const ProfileContext = createContext<ProfileContextType>({
 	addComment: () => null,
 	deleteComment: () => null,
 	addPost: (jwt: string, postContent: PostContent[]) => null,
+	deletePost: () => null,
 	setProfileLoading: () => null,
 	clearPosts: () => null,
 });
@@ -39,6 +41,7 @@ enum PROFILE_ACTIONS {
 	ADD_COMMENT,
 	DELETE_COMMENT,
 	ADD_POST,
+	DELETE_POST,
 	TOGGLE_LIKE_POST,
 }
 
@@ -78,13 +81,19 @@ type AddPostAction = {
 	payload: Post;
 };
 
+type DeletePostAction = {
+	type: typeof PROFILE_ACTIONS.DELETE_POST;
+	payload: string;
+};
+
 type ProfileActions =
 	| GetPostsAction
 	| ToggleLikePostAction
 	| PostsLoadingAction
 	| AddCommentAction
 	| DeleteCommentAction
-	| AddPostAction;
+	| AddPostAction
+	| DeletePostAction;
 
 function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 	switch (action.type) {
@@ -141,6 +150,11 @@ function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 			return {
 				...state,
 				posts: [action.payload].concat(state.posts),
+			};
+		case PROFILE_ACTIONS.DELETE_POST:
+			return {
+				...state,
+				posts: state.posts.filter((p) => p.id !== action.payload),
 			};
 		default:
 			return state;
@@ -265,6 +279,13 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
+	const deletePost = (postId: string) => {
+		profileDispatch({
+			type: PROFILE_ACTIONS.DELETE_POST,
+			payload: postId,
+		});
+	};
+
 	return (
 		<>
 			<ProfileContext.Provider
@@ -275,6 +296,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 					addComment,
 					deleteComment,
 					addPost,
+					deletePost,
 					setProfileLoading,
 					clearPosts,
 				}}>

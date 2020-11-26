@@ -11,17 +11,27 @@ const createProfilePost = ({
 	item,
 	index,
 	onPressPost,
+	onLongPressPost,
 }: {
 	item: Post;
 	index: number;
 	onPressPost: Function;
-}) => (item ? <PostPreview post={item} onPressPost={onPressPost} /> : null);
+	onLongPressPost: Function;
+}) =>
+	item ? (
+		<PostPreview
+			post={item}
+			onPressPost={onPressPost}
+			onLongPressPost={onLongPressPost}
+		/>
+	) : null;
 
 type PostsListProps = {
 	postListRef: RefObject<FlatList>;
 	isRefreshing: boolean | null;
 	posts: Post[];
 	onPressPost: Function;
+	onLongPressPost: Function;
 	onRefreshPage: (() => void) | null;
 };
 
@@ -31,6 +41,7 @@ const PostsList = (props: PostsListProps) => {
 		isRefreshing,
 		posts,
 		onPressPost,
+		onLongPressPost,
 		onRefreshPage,
 	} = props;
 
@@ -42,7 +53,7 @@ const PostsList = (props: PostsListProps) => {
 			refreshing={isRefreshing}
 			data={posts}
 			renderItem={({ item, index }: { item: Post; index: number }) =>
-				createProfilePost({ item, index, onPressPost })
+				createProfilePost({ item, index, onPressPost, onLongPressPost })
 			}
 			keyExtractor={(post: Post) => post.id.toString()}
 			onRefresh={onRefreshPage}

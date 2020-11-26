@@ -93,16 +93,16 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 		});
 	};
 
+	const onLongPressPost = (postId: string) => {
+		return null;
+	};
+
 	if (isProfileLoading || isPageLoading) return <ScreenLoadingIndicator />;
 
 	return (
 		<>
 			<ScreenContainer>
-				<MoreInfo
-					bio={
-						'Est minim ea do aliqua veniam commodo sit officia ipsum non deserunt fugiat.'
-					}
-				/>
+				<MoreInfo bio={user.bio} />
 				<UnreadBanner
 					numUnreadPosts={numUnreadPosts}
 					onPress={onPressUnreadBanner}
@@ -115,6 +115,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 						posts={posts}
 						isRefreshing={isRefreshing}
 						onPressPost={onPressPost}
+						onLongPressPost={onLongPressPost}
 						postListRef={postListRef}
 					/>
 				)}
