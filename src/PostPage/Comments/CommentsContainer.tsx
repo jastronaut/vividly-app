@@ -13,6 +13,7 @@ const EmptyCommentsContainer = styled.View`
 const EmptyCommentsText = styled.Text`
 	color: ${({ theme }) => theme.colors.muted.fg};
 	text-align: center;
+	margin-bottom: 20%;
 `;
 
 type CommentsContainerProps = {

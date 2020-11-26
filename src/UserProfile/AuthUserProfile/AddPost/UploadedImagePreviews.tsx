@@ -1,13 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-	View,
-	Dimensions,
-	Text,
-	KeyboardAvoidingView,
-	FlatList,
-	Alert,
-	Pressable,
-} from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import styled from 'styled-components/native';
 

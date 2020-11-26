@@ -116,7 +116,7 @@ const AddPostComponent = () => {
 				const imgObj = {
 					index: postContentIndex,
 					postType: POST_TYPE.image,
-					content: imgData.data,
+					content: imgData.uri,
 					width: imgData.width,
 					height: imgData.height,
 				};

@@ -39,16 +39,28 @@ export const renderPostContent = (preview: PostContent) => {
 type PostPreviewProps = {
 	post: Post;
 	onPressPost: Function;
+	onLongPressPost: Function;
 };
 
-const PostPreview = ({ post, onPressPost }: PostPreviewProps) => {
+const PostPreview = ({
+	post,
+	onPressPost,
+	onLongPressPost,
+}: PostPreviewProps) => {
 	const { toggleLikePost } = useContext(ProfileContext);
 
 	return (
-		<Pressable onPress={() => onPressPost(post)}>
+		<Pressable
+			onPress={() => onPressPost(post)}
+			onLongPress={() => {
+				console.log('okay...');
+				onLongPressPost(post.id);
+			}}>
 			{({ pressed }) => (
 				<PostWrapper isPressed={pressed}>
-					<View>{post.content.map((c) => renderPostContent(c))}</View>
+					<View style={{ flex: 1 }}>
+						{post.content.map((c) => renderPostContent(c))}
+					</View>
 					<PostInteractionContainer>
 						<Pressable
 							onPress={() => toggleLikePost('fakejwt', post.id)}>

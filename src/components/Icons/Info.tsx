@@ -4,7 +4,7 @@ import Svg, { SvgProps, Circle, Path } from 'react-native-svg';
 import { ThemeContext } from 'styled-components/native';
 
 function Info(props: SvgProps) {
-    const theme = useContext(ThemeContext);
+	const theme = useContext(ThemeContext);
 	return (
 		<Svg
 			width={24}
