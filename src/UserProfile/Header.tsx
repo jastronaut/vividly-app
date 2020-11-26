@@ -8,11 +8,10 @@ import Gear from '../components/Icons/Gear';
 import { ProfileHeaderContext } from './ProfileHeaderProvider';
 
 const UserInfoContainer = styled.View`
-	margin-left: 10%;
-	width: 85%;
+	margin-left: 15%;
+	width: 75%;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
 	align-items: center;
 `;
 
@@ -49,8 +48,11 @@ const IconsContainer = styled.View`
 	display: flex;
 	flex-direction: row;
 `;
+type Props = {
+	isAuthUser?: boolean;
+};
 
-const Header = (props: BaseUser) => {
+const Header = (props: Props & BaseUser) => {
 	const { name, username } = props;
 	const { toggleInfoShowing } = useContext(ProfileHeaderContext);
 
@@ -66,7 +68,7 @@ const Header = (props: BaseUser) => {
 				</NamesContainer>
 			</LeftSide>
 			<IconsContainer>
-				<Gear width={30} height={30} />
+				{props.isAuthUser ? <Gear width={30} height={30} /> : null}
 				<Pressable onPress={() => toggleInfoShowing()}>
 					<Info width={30} height={30} />
 				</Pressable>

@@ -9,7 +9,7 @@ type ProfileHeaderContextType = {
 export const ProfileHeaderContext = createContext<ProfileHeaderContextType>({
 	isInfoShowing: false,
 	toggleInfoShowing: () => null,
-	setInfoShowing: () => null
+	setInfoShowing: () => null,
 });
 
 const ProfileHeaderProvider = ({ children }: { children: ReactNode }) => {

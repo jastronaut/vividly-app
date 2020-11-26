@@ -57,6 +57,8 @@ const HomeRoutes = () => {
 				component={AuthUserProfile}
 				options={{
 					title: authUser.name,
+					headerBackTitleVisible: false,
+					headerTitle: () => <Header {...authUser} isAuthUser />,
 					...navHeaderStyles,
 				}}
 			/>
@@ -64,6 +66,7 @@ const HomeRoutes = () => {
 				name='PostPage'
 				options={{
 					title: 'Post',
+					headerBackTitle: 'Back',
 					...navHeaderStyles,
 				}}
 				component={PostPage}
