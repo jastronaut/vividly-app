@@ -10,8 +10,9 @@ type HomeStackParamList = {
 		index: number;
 	};
 	PostPage: {
-		post: Post;
+		postId: string;
 		user: BaseUser;
+		fromPage: string;
 	};
 	AppSettings: undefined;
 	AuthUserProfile: undefined;

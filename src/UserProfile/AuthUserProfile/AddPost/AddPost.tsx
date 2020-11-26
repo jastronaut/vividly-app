@@ -4,6 +4,7 @@ import {
 	Dimensions,
 	Text,
 	KeyboardAvoidingView,
+	Keyboard,
 	Alert,
 	Pressable,
 } from 'react-native';
@@ -83,7 +84,7 @@ const exitPostConfirmation = (exitAddPost: Function) =>
 
 const AddPostComponent = () => {
 	const navigation = useNavigation();
-	const { addPost, test } = useContext(ProfileContext);
+	const { addPost } = useContext(ProfileContext);
 
 	const [newPostText, setNewPostText] = useState<string>('');
 	const [postImages, setPostImages] = useState<ImageUpload[]>([]);
@@ -96,15 +97,12 @@ const AddPostComponent = () => {
 		);
 	};
 
-	useEffect(() => {
-		console.log(postImages.length);
-	}, [postImages]);
-
 	const createPost = useCallback(() => {
+		setIsLoading(true);
+		Keyboard.dismiss();
 		if (newPostText.trim().length < 1 && postImages.length < 1) return;
 		let postContent: PostContent[] = [];
 		let postContentIndex = 0; // i shouldn't be doing this here
-		console.log('herer1', postContent);
 		if (newPostText.trim().length) {
 			postContent.push({
 				index: postContentIndex,
@@ -113,7 +111,6 @@ const AddPostComponent = () => {
 			});
 			postContentIndex++;
 		}
-		console.log('herer2', postContent);
 		if (postImages.length) {
 			const postImagesContent = postImages.map((imgData) => {
 				const imgObj = {
@@ -128,9 +125,10 @@ const AddPostComponent = () => {
 			});
 			postContent = postContent.concat(postImagesContent);
 		}
-		console.log('herer3', postContent);
 		addPost('fakejwt', postContent);
-		console.log('wat');
+		// TODO: error handling here :)
+		setIsLoading(false);
+		navigation.navigate('AuthUserProfile');
 	}, [newPostText, postImages]);
 
 	const exitAddPost = () => navigation.goBack();
@@ -164,46 +162,6 @@ const AddPostComponent = () => {
 	};
 
 	useEffect(() => {
-		/*
-		const createPost = () => {
-			if (newPostText.trim().length < 1 && postImages.length < 1) return;
-			let postContent: PostContent[] = [];
-			let postContentIndex = 0; // i shouldn't be doing this here
-			console.log('herer1', postContent);
-			if (newPostText.trim().length) {
-				postContent.push({
-					index: postContentIndex,
-					postType: POST_TYPE.text,
-					content: newPostText,
-				});
-				postContentIndex++;
-			}
-			console.log('herer2', postContent);
-			if (postImages.length) {
-				const postImagesContent = postImages.map((imgData) => {
-					const imgObj = {
-						index: postContentIndex,
-						postType: POST_TYPE.image,
-						content: imgData.data,
-						width: imgData.width,
-						height: imgData.height,
-					};
-					postContentIndex++;
-					return imgObj;
-				});
-				postContent = postContent.concat(postImagesContent);
-			}
-			console.log('herer3', postContent);
-			try {
-				addPost('fakejwt', postContent);
-			} catch (e) {
-				console.log(e);
-			}
-			console.log(addPost);
-			test();
-			console.log('wat');
-		};*/
-
 		navigation.setOptions({
 			headerLeft: (props: StackHeaderLeftButtonProps) => (
 				<HeaderBackButton

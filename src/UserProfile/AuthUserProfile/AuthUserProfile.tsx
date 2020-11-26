@@ -31,7 +31,8 @@ const AuthUserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const onPressPost = (post: Post) => {
 		navigation.navigate('PostPage', {
 			user: baseAuthUser,
-			post,
+			postId: post.id,
+			fromPage: 'profile',
 		});
 	};
 

@@ -77,7 +77,8 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const onPressPost = (post: Post) => {
 		navigation.navigate('PostPage', {
 			user,
-			post,
+			postId: post.id,
+			fromPage: 'profile',
 		});
 	};
 
