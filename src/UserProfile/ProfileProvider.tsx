@@ -15,6 +15,8 @@ type ProfileContextType = {
 	addComment: Function;
 	deleteComment: Function;
 	addPost: Function;
+	setProfileLoading: Function;
+	clearPosts: Function;
 };
 
 export const ProfileContext = createContext<ProfileContextType>({
@@ -27,6 +29,8 @@ export const ProfileContext = createContext<ProfileContextType>({
 	addComment: () => null,
 	deleteComment: () => null,
 	addPost: (jwt: string, postContent: PostContent[]) => null,
+	setProfileLoading: () => null,
+	clearPosts: () => null,
 });
 
 enum PROFILE_ACTIONS {
@@ -248,6 +252,19 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
+	const setProfileLoading = () => {
+		profileDispatch({
+			type: PROFILE_ACTIONS.POSTS_LOADING,
+		});
+	};
+
+	const clearPosts = () => {
+		profileDispatch({
+			type: PROFILE_ACTIONS.GET_POSTS,
+			payload: [],
+		});
+	};
+
 	return (
 		<>
 			<ProfileContext.Provider
@@ -258,6 +275,8 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 					addComment,
 					deleteComment,
 					addPost,
+					setProfileLoading,
+					clearPosts,
 				}}>
 				{children}
 			</ProfileContext.Provider>
