@@ -6,9 +6,8 @@ const LoadingContainer = styled.View`
 	position: absolute;
 	height: 100%;
 	width: 100%;
-	background: black;
+	background-color: ${({ theme }) => theme.colors.main.bg};
 	z-index: 1000;
-	opacity: 0.25;
 	top: 0;
 	display: flex;
 	justify-content: center;
