@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components/native';
-import { Text, View, TextInput, Dimensions } from 'react-native';
+import { Text, View, TextInput, Dimensions, Keyboard } from 'react-native';
 
+import { ProfileContext } from '../../UserProfile/ProfileProvider';
+import { AuthContext } from '../../AuthProvider';
 import Button from '../../components/Button';
 import CommentsContainer from './CommentsContainer';
 
@@ -43,10 +45,26 @@ const ButtonWrapper = styled.View`
 	align-self: flex-start;
 `;
 
-const AddComment = () => {
-	const [newComment, setNewComment] = useState<string>('');
+type Props = {
+	newComment: string;
+	setNewComment: Function;
+	postId: string;
+};
+
+const AddComment = ({ newComment, setNewComment, postId }: Props) => {
+	const { addComment } = useContext(ProfileContext);
+	const { authUser } = useContext(AuthContext).authState;
+
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
+
+	const onSubmit = () => {
+		setIsLoading(true);
+		Keyboard.dismiss();
+		addComment('jwt', postId, newComment, authUser);
+		setNewComment('');
+		setIsLoading(false);
+	};
 
 	return (
 		<Container isInputFocused={isInputFocused}>
@@ -63,7 +81,9 @@ const AddComment = () => {
 				/>
 			</InputWrapper>
 			<ButtonWrapper>
-				<ButtonStyled>
+				<ButtonStyled
+					disabled={newComment.trim().length < 1}
+					onPress={() => onSubmit()}>
 					<Text>Post</Text>
 				</ButtonStyled>
 			</ButtonWrapper>

@@ -41,14 +41,18 @@ const Time = styled.Text`
 
 type Props = {
 	comment: Comment;
+	onPress: Function;
+	onLongPress: Function;
 };
 
-const SingleComment = ({ comment }: Props) => {
+const SingleComment = ({ comment, onPress, onLongPress }: Props) => {
 	const navigation = useNavigation();
 	const { author } = comment;
 
 	return (
-		<Pressable>
+		<Pressable
+			onPress={() => onPress(author.username)}
+			onLongPress={() => onLongPress(comment.id, author.id)}>
 			{({ pressed }) => (
 				<CommentStyled isPressed={pressed}>
 					<Pressable>

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Comment } from '../../types';
 import SingleComment from './SingleComment';
@@ -17,9 +17,15 @@ const EmptyCommentsText = styled.Text`
 
 type CommentsContainerProps = {
 	comments: Comment[];
+	onPressComment: Function;
+	onLongPress: Function;
 };
 
-const CommentsContainer = ({ comments }: CommentsContainerProps) => {
+const CommentsContainer = ({
+	comments,
+	onPressComment,
+	onLongPress,
+}: CommentsContainerProps) => {
 	if (!comments || !comments.length) {
 		return (
 			<EmptyCommentsContainer>
@@ -31,7 +37,12 @@ const CommentsContainer = ({ comments }: CommentsContainerProps) => {
 	return (
 		<View style={{ marginBottom: '20%' }}>
 			{comments.map((comment) => (
-				<SingleComment key={comment.id} comment={comment} />
+				<SingleComment
+					key={comment.id}
+					comment={comment}
+					onPress={onPressComment}
+					onLongPress={onLongPress}
+				/>
 			))}
 		</View>
 	);
