@@ -44,7 +44,6 @@ const AuthUserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 		<>
 			{isProfileLoading ? <ScreenLoadingIndicator /> : null}
 			<ScreenContainer withoutPadding>
-				<Header {...baseAuthUser} />
 
 				{!isProfileLoading && (
 					<PostsList

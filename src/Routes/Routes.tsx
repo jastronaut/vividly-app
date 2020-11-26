@@ -2,8 +2,9 @@ import React, { useContext } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'react-native';
+import { StatusBar, Text } from 'react-native';
 
+import Header from '../UserProfile/Header';
 import ScreenLoadingIndicator from '../components/ScreenLoadingIndicator';
 import Login from '../Login';
 import Home from '../Home';
@@ -17,6 +18,7 @@ import { AuthContext } from '../AuthProvider';
 import { ThemeContext } from 'styled-components/native';
 import FeedProvider from '../FeedProvider';
 import ProfileProvider from '../UserProfile/ProfileProvider';
+import ProfileHeaderProvider from '../UserProfile/ProfileHeaderProvider';
 
 const HomeStack = createStackNavigator();
 const RootStack = createStackNavigator();
@@ -44,6 +46,8 @@ const HomeRoutes = () => {
 				component={UserProfile}
 				options={({ route }) => ({
 					title: `${route.params.user.name}`,
+					headerBackTitleVisible: false,
+					headerTitle: () => <Header {...route.params.user} />,
 					...navHeaderStyles,
 				})}
 			/>
@@ -75,38 +79,40 @@ const Routes = () => {
 	return (
 		<FeedProvider>
 			<ProfileProvider>
-				<SafeAreaProvider>
-					<StatusBar
-						barStyle={
-							isLightMode ? 'dark-content' : 'light-content'
-						}
-					/>
-					{authState.isAuthInitFinished ? (
-						authState.authUser && authState.jwt ? (
-							<NavigationContainer>
-								<RootStack.Navigator mode='modal'>
-									<RootStack.Screen
-										name='Main'
-										component={HomeRoutes}
-										options={{ headerShown: false }}
-									/>
-									<RootStack.Screen
-										name='AddPost'
-										component={AddPost}
-										options={{
-											headerBackTitle: 'Back',
-											...navHeaderStyles,
-										}}
-									/>
-								</RootStack.Navigator>
-							</NavigationContainer>
+				<ProfileHeaderProvider>
+					<SafeAreaProvider>
+						<StatusBar
+							barStyle={
+								isLightMode ? 'dark-content' : 'light-content'
+							}
+						/>
+						{authState.isAuthInitFinished ? (
+							authState.authUser && authState.jwt ? (
+								<NavigationContainer>
+									<RootStack.Navigator mode='modal'>
+										<RootStack.Screen
+											name='Main'
+											component={HomeRoutes}
+											options={{ headerShown: false }}
+										/>
+										<RootStack.Screen
+											name='AddPost'
+											component={AddPost}
+											options={{
+												headerBackTitle: 'Back',
+												...navHeaderStyles,
+											}}
+										/>
+									</RootStack.Navigator>
+								</NavigationContainer>
+							) : (
+								<Login />
+							)
 						) : (
-							<Login />
-						)
-					) : (
-						<ScreenLoadingIndicator />
-					)}
-				</SafeAreaProvider>
+							<ScreenLoadingIndicator />
+						)}
+					</SafeAreaProvider>
+				</ProfileHeaderProvider>
 			</ProfileProvider>
 		</FeedProvider>
 	);

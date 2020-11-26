@@ -1,10 +1,22 @@
-import React from 'react';
-import { Text } from 'react-native';
+import React, { useContext } from 'react';
+import { Text, View, Pressable } from 'react-native';
 import styled from 'styled-components/native';
 
 import { BaseUser } from '../types';
+import Info from '../components/Icons/Info';
+import Gear from '../components/Icons/Gear';
+import { ProfileHeaderContext } from './ProfileHeaderProvider';
 
 const UserInfoContainer = styled.View`
+	margin-left: 10%;
+	width: 85%;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+`;
+
+const LeftSide = styled.View`
 	display: flex;
 	flex-direction: row;
 `;
@@ -12,9 +24,9 @@ const UserInfoContainer = styled.View`
 const ProfilePictureContainer = styled.View``;
 
 const ProfilePicture = styled.Image`
-	border-radius: 25px;
-	height: 50px;
-	width: 50px;
+	border-radius: 20px;
+	height: 40px;
+	width: 40px;
 	justify-content: center;
 `;
 
@@ -33,25 +45,32 @@ export const Username = styled.Text`
 	font-size: 15px;
 `;
 
-const Bio = styled.Text`
-	color: ${({ theme }) => theme.colors.main.fg};
+const IconsContainer = styled.View`
+	display: flex;
+	flex-direction: row;
 `;
 
 const Header = (props: BaseUser) => {
-	const { name, username, bio } = props;
+	const { name, username } = props;
+	const { toggleInfoShowing } = useContext(ProfileHeaderContext);
 
 	return (
 		<UserInfoContainer>
-			<ProfilePictureContainer>
-				<ProfilePicture
-					source={{ uri: 'https://i.imgur.com/NSjoY6s.png' }}
-				/>
-			</ProfilePictureContainer>
-			<NamesContainer>
-				<Name>{name}</Name>
-				<Username>@{username}</Username>
-			</NamesContainer>
-			<Bio>{bio}</Bio>
+			<LeftSide>
+				<ProfilePictureContainer>
+					<ProfilePicture source={require('../pup.jpg')} />
+				</ProfilePictureContainer>
+				<NamesContainer>
+					<Name>{name}</Name>
+					<Username>@{username}</Username>
+				</NamesContainer>
+			</LeftSide>
+			<IconsContainer>
+				<Gear width={30} height={30} />
+				<Pressable onPress={() => toggleInfoShowing()}>
+					<Info width={30} height={30} />
+				</Pressable>
+			</IconsContainer>
 		</UserInfoContainer>
 	);
 };
