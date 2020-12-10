@@ -128,7 +128,7 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 			try {
 				if (!jwt) throw Error('no jwt');
 				const req = await fetch(
-					'http://localhost:1337/v0/friends/feed',
+					'http://127.0.0.1:1337/v0/friends/feed',
 					{
 						method: 'GET',
 						headers: {
@@ -160,7 +160,8 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 				console.log(e);
 			}
 		};
-		// requestFeed();
+		requestFeed();
+		/*
 		feedDispatch({
 			type: FEED_ACTIONS.SET_AUTH_USER_FEED,
 			payload: mockAuthUserFeed,
@@ -170,6 +171,7 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 			type: FEED_ACTIONS.GET_FEED,
 			payload: mockFeed,
 		});
+		*/
 	};
 
 	const markFeedRead = (friendId: string) => {

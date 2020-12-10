@@ -19,7 +19,6 @@ export interface Friend {
 }
 
 export interface CommentUser extends BaseUser {
-	isFriendsWithAuthUser: boolean;
 }
 
 export interface AuthUser extends BaseUser {
@@ -82,6 +81,7 @@ export interface ImagePost {
 }
 
 export type PostContent = TextPost | ImagePost | LinkPost;
+export type PostContentRaw = Omit<TextPost, 'index'> | Omit<ImagePost, 'index'> | Omit<LinkPost, 'index'>;
 
 export interface Comment {
 	id: string;

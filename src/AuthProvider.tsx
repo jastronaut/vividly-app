@@ -185,8 +185,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 				console.log(e);
 			}
 		};
-		// attemptLogin();
+		attemptLogin();
 
+		/*
 		const fakeLogin = async () => {
 			await AsyncStorage.setItem('@jwt', testToken);
 			await AsyncStorage.setItem(
@@ -204,6 +205,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 		};
 
 		fakeLogin();
+		*/
 	};
 
 	const logout = () => {

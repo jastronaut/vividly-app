@@ -55,7 +55,7 @@ const PostContainer = ({ user, post }: PostContainerProps) => {
 				{post.content.map((c: PostContent) => renderPostContent(c))}
 			</View>
 			<PostInteractionContainer>
-				<Pressable onPress={() => toggleLikePost(post.id)}>
+				<Pressable onPress={() => toggleLikePost(post.id, post.isLikedByUser)}>
 					<Heart isLiked={post.isLikedByUser} />
 				</Pressable>
 				<PostMetaText>{post.likeCount}</PostMetaText>
