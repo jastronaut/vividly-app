@@ -44,7 +44,7 @@ const PostPage = ({ navigation, route }: PostPageProps) => {
 		if (authorId !== authUser!.id) return;
 		showActionSheetWithOptions(ACTION_SHEET_OPTIONS, (buttonIndex) => {
 			if (buttonIndex !== 0) return;
-			deleteComment('jwt', post!.id, commentId);
+			deleteComment(post!.id, commentId);
 		});
 	};
 

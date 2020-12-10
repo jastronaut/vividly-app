@@ -13,6 +13,7 @@ import { FriendUser, Post } from '../types';
 import { UserProfileProps } from '../Routes/interfaces';
 import { ScreenContainer } from './styles';
 import MoreInfo from './MoreInfo';
+import Header from './Header';
 
 const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const { setInfoShowing } = useContext(ProfileHeaderContext);
@@ -40,6 +41,12 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	}, []);
 
 	useEffect(() => {
+		navigation.setOptions({
+			headerTitle: () => <Header {...user} />,
+		});
+	}, [user]);
+
+	useEffect(() => {
 		const user = route.params.user;
 		if (user.unreadPosts > 0) {
 			setIsUnreadBannerShowing(true);
@@ -47,10 +54,10 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 			setIsUnreadBannerShowing(false);
 		}
 		setNumUnreadPosts(user.unreadPosts);
-		markFeedRead(jwt, user.id);
+		markFeedRead(user.id);
 		setUser(user);
 		setIndex(route.params.index);
-		getPosts(jwt, route.params.user.id);
+		getPosts(route.params.user.id);
 		setTimeout(() => setIsPageLoading(false), 100);
 	}, [route.params.user, route.params.index]);
 
@@ -69,7 +76,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 		if (nextUser && jwt) {
 			setUser(nextUser);
 			setIndex(index + 1);
-			getPosts(jwt, nextUser.id);
+			getPosts(nextUser.id);
 		} else {
 			console.log('cant find');
 		}

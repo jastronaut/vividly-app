@@ -89,14 +89,18 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 		const loadJwtUserFromStorage = async () => {
 			try {
 				const token = await AsyncStorage.getItem('@jwt');
+				/*
 				// TODO: remove
 				const storageUser = await AsyncStorage.getItem('@authUser');
 				if (!storageUser || !token) {
 					throw Error('no user or token in storage');
 				}
 				const user = JSON.parse(storageUser);
+				*/
+				if (!token) {
+					throw Error('no token in storage');
+				}
 
-				/*
 				const initInfoReq = await fetch(
 					'http://127.0.0.1:1337/v0/users/self',
 					{
@@ -116,7 +120,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 				}
 
 				const user = await initInfoResp.user;
-				*/
 
 				authDispatch({
 					type: AUTH_ACTIONS.GET_USER,
@@ -125,13 +128,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 						jwt: token,
 					},
 				});
-
-				authDispatch({
-					type: AUTH_ACTIONS.AUTH_INIT_FINISHED,
-				});
 			} catch (e) {
 				console.log('Error: cant load init data from storage');
 				console.log(e);
+			} finally {
+				authDispatch({
+					type: AUTH_ACTIONS.AUTH_INIT_FINISHED,
+				});
 			}
 		};
 

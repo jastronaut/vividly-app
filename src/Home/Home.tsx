@@ -30,7 +30,7 @@ const Home = ({ navigation }: HomeProps) => {
 	const [friendQuery, setFriendQuery] = useState<string>('');
 
 	useEffect(() => {
-		getFeed(authState.jwt);
+		getFeed();
 	}, []);
 
 	const onPressFeedPreview = (user: FriendUser, index: number) => {

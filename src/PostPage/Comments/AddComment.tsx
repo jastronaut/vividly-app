@@ -61,7 +61,7 @@ const AddComment = ({ newComment, setNewComment, postId }: Props) => {
 	const onSubmit = () => {
 		setIsLoading(true);
 		Keyboard.dismiss();
-		addComment('jwt', postId, newComment, authUser);
+		addComment(postId, newComment, authUser);
 		setNewComment('');
 		setIsLoading(false);
 	};

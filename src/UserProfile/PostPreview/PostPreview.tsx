@@ -63,7 +63,7 @@ const PostPreview = ({
 					</View>
 					<PostInteractionContainer>
 						<Pressable
-							onPress={() => toggleLikePost('fakejwt', post.id)}>
+							onPress={() => toggleLikePost(post.id)}>
 							<Heart isLiked={post.isLikedByUser} />
 						</Pressable>
 						<PostMetaText>{post.likeCount}</PostMetaText>

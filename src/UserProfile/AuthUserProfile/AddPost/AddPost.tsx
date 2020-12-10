@@ -125,7 +125,7 @@ const AddPostComponent = () => {
 			});
 			postContent = postContent.concat(postImagesContent);
 		}
-		addPost('fakejwt', postContent);
+		addPost(postContent);
 		// TODO: error handling here :)
 		setIsLoading(false);
 		navigation.navigate('AuthUserProfile');

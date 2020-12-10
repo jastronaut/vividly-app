@@ -1,7 +1,8 @@
-import React, { useReducer, createContext, ReactNode } from 'react';
+import React, { useReducer, createContext, ReactNode, useContext } from 'react';
 
 import { Post, Comment, AuthUser, PostContent } from '../types';
 import { mockProfiles } from '../mockData';
+import { AuthContext } from '../AuthProvider';
 
 type ProfileState = {
 	posts: Post[];
@@ -162,18 +163,20 @@ function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 }
 
 const ProfileProvider = ({ children }: { children: ReactNode }) => {
+	const { jwt } = useContext(AuthContext).authState;
 	const [state, profileDispatch] = useReducer(reducer, {
 		posts: [],
 		isProfileLoading: false,
 	});
 
-	const getPosts = (jwt: string, id: string, startingPostIndex = 0) => {
+	const getPosts = (id: string, startingPostIndex = 0) => {
 		profileDispatch({
 			type: PROFILE_ACTIONS.POSTS_LOADING,
 		});
 
 		const fetchFeed = async () => {
 			try {
+				if (!jwt) throw Error('missing jwt');
 				const req = await fetch(
 					`http://127.0.0.1:1337/v0/friends/feed/${id}/${startingPostIndex}`,
 					{
@@ -205,7 +208,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
-	const toggleLikePost = (jwt: string, id: string) => {
+	const toggleLikePost = (id: string) => {
 		// TODO: write request to like/unlike post
 		profileDispatch({
 			type: PROFILE_ACTIONS.TOGGLE_LIKE_POST,
@@ -213,12 +216,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
-	const addComment = (
-		jwt: string,
-		id: string,
-		comment: string,
-		user: AuthUser,
-	) => {
+	const addComment = (id: string, comment: string, user: AuthUser) => {
 		// TODO: write request to add comment
 		const newComment = {
 			id: 'fakeId' + comment + Date.now().toString(),
@@ -239,7 +237,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
-	const deleteComment = (jwt: string, id: string, commentId: string) => {
+	const deleteComment = (id: string, commentId: string) => {
 		// TODO: write request to delete comment
 		profileDispatch({
 			type: PROFILE_ACTIONS.DELETE_COMMENT,
@@ -250,7 +248,7 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
-	const addPost = (jwt: string, postContent: PostContent[]) => {
+	const addPost = (postContent: PostContent[]) => {
 		const mockPost: Post = {
 			id: Date.now().toString(),
 			createdTime: Date.now().toString(),

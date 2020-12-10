@@ -13,6 +13,10 @@ import AuthUserProfile from '../UserProfile/AuthUserProfile';
 import PostPage from '../PostPage';
 import AppSettings from '../AppSettings';
 import AddPost from '../UserProfile/AuthUserProfile/AddPost';
+import NotificationsButton from '../UserProfile/AuthUserProfile/NotificationsButton';
+import FriendsButton from '../UserProfile/FriendsButton';
+import Notifications from '../Notifications';
+import ProfileRightHeader  from '../UserProfile/ProfileRightHeader';
 
 import { AuthContext } from '../AuthProvider';
 import { ThemeContext } from 'styled-components/native';
@@ -40,7 +44,6 @@ const HomeRoutes = () => {
 				component={AppSettings}
 				options={{ title: 'App Settings', ...navHeaderStyles }}
 			/>
-
 			<HomeStack.Screen
 				name='UserProfile'
 				component={UserProfile}
@@ -48,10 +51,10 @@ const HomeRoutes = () => {
 					title: `${route.params.user.name}`,
 					headerBackTitleVisible: false,
 					headerTitle: () => <Header {...route.params.user} />,
+					headerRight: () => <ProfileRightHeader />,
 					...navHeaderStyles,
 				})}
 			/>
-
 			<HomeStack.Screen
 				name='AuthUserProfile'
 				component={AuthUserProfile}
@@ -59,6 +62,7 @@ const HomeRoutes = () => {
 					title: authUser.name,
 					headerBackTitleVisible: false,
 					headerTitle: () => <Header {...authUser} isAuthUser />,
+					headerRight: () => <ProfileRightHeader isAuthUserPage hasUnreadNotifications={authUser.hasUnreadNotifications} />,
 					...navHeaderStyles,
 				}}
 			/>
@@ -70,6 +74,14 @@ const HomeRoutes = () => {
 					...navHeaderStyles,
 				}}
 				component={PostPage}
+			/>
+			<HomeStack.Screen
+				name='Notifications'
+				options={{
+					headerBackTitle: 'Back',
+					...navHeaderStyles,
+				}}
+				component={Notifications}
 			/>
 		</HomeStack.Navigator>
 	);

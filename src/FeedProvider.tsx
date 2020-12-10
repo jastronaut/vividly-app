@@ -1,5 +1,6 @@
-import React, { createContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useReducer, ReactNode, useContext } from 'react';
 
+import { AuthContext } from './AuthProvider';
 import { FeedPreview } from './types';
 import { mockFeed, mockAuthUserFeed } from './mockData';
 
@@ -12,12 +13,14 @@ type FeedState = {
 type FeedContextType = {
 	getFeed: Function;
 	markFeedRead: Function;
+	removeFeed: Function;
 	feedState: FeedState;
 };
 
 export const FeedContext = createContext<FeedContextType>({
 	getFeed: () => null,
 	markFeedRead: () => null,
+	removeFeed: () => null,
 	feedState: {
 		feed: [],
 		isFeedLoading: false,
@@ -30,6 +33,7 @@ enum FEED_ACTIONS {
 	MARK_FEED_READ,
 	FEED_LOADING,
 	SET_AUTH_USER_FEED,
+	REMOVE_FEED,
 }
 
 type GetFeedAction = {
@@ -52,11 +56,17 @@ type SetAuthUserFeedAction = {
 	payload: FeedPreview;
 };
 
+type RemoveFeedAction = {
+	type: typeof FEED_ACTIONS.REMOVE_FEED;
+	payload: string;
+};
+
 type FeedActions =
 	| GetFeedAction
 	| MarkFeedReadAction
 	| FeedLoadingAction
-	| SetAuthUserFeedAction;
+	| SetAuthUserFeedAction
+	| RemoveFeedAction;
 
 function reducer(state: FeedState, action: FeedActions): FeedState {
 	switch (action.type) {
@@ -89,25 +99,34 @@ function reducer(state: FeedState, action: FeedActions): FeedState {
 				...state,
 				isFeedLoading: true,
 			};
+		case FEED_ACTIONS.REMOVE_FEED:
+			return {
+				...state,
+				feed: state.feed.filter(
+					(feed) => feed.user.id !== action.payload,
+				),
+			};
 		default:
 			return state;
 	}
 }
 
 const FeedProvider = ({ children }: { children: ReactNode }) => {
+	const { jwt } = useContext(AuthContext).authState;
 	const [feedState, feedDispatch] = useReducer(reducer, {
 		feed: [],
 		isFeedLoading: false,
 		authUserFeed: null,
 	});
 
-	const getFeed = (jwt: string) => {
+	const getFeed = () => {
 		feedDispatch({
 			type: FEED_ACTIONS.FEED_LOADING,
 		});
 
 		const requestFeed = async () => {
 			try {
+				if (!jwt) throw Error('no jwt');
 				const req = await fetch(
 					'http://localhost:1337/v0/friends/feed',
 					{
@@ -121,7 +140,7 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 
 				const resp = await req.json();
 
-				if (!resp || !req.status) {
+				if (!resp || !resp.success) {
 					throw Error('cant request feed');
 				}
 
@@ -153,10 +172,18 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
-	const markFeedRead = (jwt: string, friendId: string) => {
+	const markFeedRead = (friendId: string) => {
 		// TODO: write request to mark feed as read
 		feedDispatch({
 			type: FEED_ACTIONS.MARK_FEED_READ,
+			payload: friendId,
+		});
+	};
+
+	const removeFeed = (friendId: string) => {
+		// TODO: write request to delete friend
+		feedDispatch({
+			type: FEED_ACTIONS.REMOVE_FEED,
 			payload: friendId,
 		});
 	};
@@ -167,6 +194,7 @@ const FeedProvider = ({ children }: { children: ReactNode }) => {
 				getFeed,
 				markFeedRead,
 				feedState,
+				removeFeed,
 			}}>
 			{children}
 		</FeedContext.Provider>

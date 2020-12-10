@@ -73,7 +73,7 @@ const AuthUserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	};
 
 	useEffect(() => {
-		getPosts(jwt, authUser.id);
+		getPosts(authUser.id);
 	}, []);
 
 	return (

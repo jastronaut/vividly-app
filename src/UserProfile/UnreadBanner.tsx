@@ -6,6 +6,7 @@ const UnreadBannerContainer = styled.View`
 	width: 100%;
 	display: flex;
 	background-color: red;
+	opacity: 0.8;
 	justify-content: center;
 	align-items: center;
 	padding: 2%;
