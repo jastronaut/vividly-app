@@ -1,4 +1,10 @@
-import React, { useReducer, createContext, ReactNode, useContext } from 'react';
+import React, {
+	useReducer,
+	createContext,
+	ReactNode,
+	useContext,
+	useCallback,
+} from 'react';
 
 import { Post, Comment, AuthUser, PostContent, PostContentRaw } from '../types';
 import { mockProfiles } from '../mockData';
@@ -7,7 +13,9 @@ import { AuthContext } from '../AuthProvider';
 type ProfileState = {
 	posts: Post[];
 	isProfileLoading: boolean;
-	cursor: number; // not real lol
+	cursor: string | null; // not real lol
+	hasMorePosts: boolean;
+	isLoadingMore: boolean;
 };
 
 type ProfileContextType = {
@@ -20,13 +28,17 @@ type ProfileContextType = {
 	deletePost: Function;
 	setProfileLoading: Function;
 	clearPosts: Function;
+	resetCursor: Function;
+	resetProfile: Function;
 };
 
 export const ProfileContext = createContext<ProfileContextType>({
 	state: {
 		posts: [],
 		isProfileLoading: false,
-		cursor: 0,
+		cursor: null,
+		hasMorePosts: true,
+		isLoadingMore: false,
 	},
 	getPosts: () => null,
 	toggleLikePost: () => null,
@@ -36,6 +48,8 @@ export const ProfileContext = createContext<ProfileContextType>({
 	deletePost: () => null,
 	setProfileLoading: () => null,
 	clearPosts: () => null,
+	resetCursor: () => null,
+	resetProfile: () => null,
 });
 
 enum PROFILE_ACTIONS {
@@ -46,13 +60,18 @@ enum PROFILE_ACTIONS {
 	ADD_POST,
 	DELETE_POST,
 	TOGGLE_LIKE_POST,
-	INCREASE_CURSOR,
+	SET_CURSOR,
 	APPEND_POSTS,
+	SET_LOADING_MORE,
+	RESET_PROFILE,
 }
 
 type GetPostsAction = {
 	type: typeof PROFILE_ACTIONS.GET_POSTS;
-	payload: Post[];
+	payload: {
+		posts: Post[];
+		hasMorePosts: boolean;
+	};
 };
 
 type ToggleLikePostAction = {
@@ -91,14 +110,31 @@ type DeletePostAction = {
 	payload: string;
 };
 
-type IncreaseCursorAction = {
-	type: typeof PROFILE_ACTIONS.INCREASE_CURSOR;
-	payload?: null;
+type SetCursorAction = {
+	type: typeof PROFILE_ACTIONS.SET_CURSOR;
+	payload: {
+		cursor: string | null;
+	};
 };
 
 type AppendPostsAction = {
 	type: typeof PROFILE_ACTIONS.APPEND_POSTS;
-	payload: Post[];
+	payload: {
+		posts: Post[];
+		hasMorePosts: boolean;
+	};
+};
+
+type SetLoadingMorePosts = {
+	type: typeof PROFILE_ACTIONS.SET_LOADING_MORE;
+	payload: {
+		isLoadingMore: boolean;
+	};
+};
+
+type ResetProfileAction = {
+	type: typeof PROFILE_ACTIONS.RESET_PROFILE;
+	payload?: null;
 };
 
 type ProfileActions =
@@ -109,15 +145,18 @@ type ProfileActions =
 	| DeleteCommentAction
 	| AddPostAction
 	| DeletePostAction
-	| IncreaseCursorAction
-	| AppendPostsAction;
+	| SetCursorAction
+	| AppendPostsAction
+	| SetLoadingMorePosts
+	| ResetProfileAction;
 
 function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 	switch (action.type) {
 		case PROFILE_ACTIONS.GET_POSTS:
 			return {
 				...state,
-				posts: action.payload,
+				posts: action.payload.posts,
+				hasMorePosts: action.payload.hasMorePosts,
 				isProfileLoading: false,
 			};
 		case PROFILE_ACTIONS.TOGGLE_LIKE_POST:
@@ -177,15 +216,31 @@ function reducer(state: ProfileState, action: ProfileActions): ProfileState {
 				...state,
 				posts: state.posts.filter((p) => p.id !== action.payload),
 			};
-		case PROFILE_ACTIONS.INCREASE_CURSOR:
+		case PROFILE_ACTIONS.SET_CURSOR:
 			return {
 				...state,
-				cursor: state.cursor + 15,
+				cursor: action.payload.cursor,
 			};
 		case PROFILE_ACTIONS.APPEND_POSTS:
 			return {
 				...state,
-				posts: state.posts.concat(action.payload),
+				posts: [...state.posts, ...action.payload.posts],
+				hasMorePosts: action.payload.hasMorePosts,
+				isProfileLoading: false,
+				isLoadingMore: false,
+			};
+		case PROFILE_ACTIONS.SET_LOADING_MORE:
+			return {
+				...state,
+				isLoadingMore: action.payload.isLoadingMore,
+			};
+		case PROFILE_ACTIONS.RESET_PROFILE:
+			return {
+				posts: [],
+				isProfileLoading: false,
+				cursor: null,
+				hasMorePosts: true,
+				isLoadingMore: false,
 			};
 		default:
 			return state;
@@ -197,20 +252,35 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 	const [state, profileDispatch] = useReducer(reducer, {
 		posts: [],
 		isProfileLoading: false,
-		cursor: 0,
+		cursor: null,
+		hasMorePosts: true,
+		isLoadingMore: false,
 	});
 	if (!jwt) return <>{children}</>;
 
-	const getPosts = (id: string, startingPostIndex = 0) => {
-		profileDispatch({
-			type: PROFILE_ACTIONS.POSTS_LOADING,
-		});
+	const getPosts = (id: string) => {
+		if (!state.hasMorePosts) return;
+
+		if (state.cursor === null) {
+			profileDispatch({
+				type: PROFILE_ACTIONS.POSTS_LOADING,
+			});
+		} else {
+			profileDispatch({
+				type: PROFILE_ACTIONS.SET_LOADING_MORE,
+				payload: {
+					isLoadingMore: true,
+				},
+			});
+		}
 
 		const fetchFeed = async () => {
 			try {
 				if (!jwt) throw Error('missing jwt');
 				const req = await fetch(
-					`http://127.0.0.1:1337/v0/friends/feed/${id}/${startingPostIndex}`,
+					`http://127.0.0.1:1337/v0/friends/feed/${id}${
+						state.cursor ? '/' + state.cursor : ''
+					}`,
 					{
 						method: 'GET',
 						headers: {
@@ -224,9 +294,22 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 					throw Error('unable to make feed request');
 				}
 
+				if (res.hasMorePosts) {
+					const lastPost: Post = res.posts[res.posts.length - 1];
+					profileDispatch({
+						type: PROFILE_ACTIONS.SET_CURSOR,
+						payload: {
+							cursor: lastPost.createdTime,
+						},
+					});
+				}
+				console.log('here for ', id);
 				profileDispatch({
-					type: PROFILE_ACTIONS.GET_POSTS,
-					payload: res.posts,
+					type: PROFILE_ACTIONS.APPEND_POSTS,
+					payload: {
+						posts: res.posts,
+						hasMorePosts: res.hasMorePosts,
+					},
 				});
 			} catch (e) {
 				console.log('error: cant get feed for user ' + id);
@@ -379,7 +462,10 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 	const clearPosts = () => {
 		profileDispatch({
 			type: PROFILE_ACTIONS.GET_POSTS,
-			payload: [],
+			payload: {
+				posts: [],
+				hasMorePosts: true,
+			},
 		});
 	};
 
@@ -413,6 +499,21 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 		deletePostRequest();
 	};
 
+	const resetCursor = () => {
+		profileDispatch({
+			type: PROFILE_ACTIONS.SET_CURSOR,
+			payload: {
+				cursor: null,
+			},
+		});
+	};
+
+	const resetProfile = () => {
+		profileDispatch({
+			type: PROFILE_ACTIONS.RESET_PROFILE
+		})
+	}
+
 	return (
 		<>
 			<ProfileContext.Provider
@@ -426,6 +527,8 @@ const ProfileProvider = ({ children }: { children: ReactNode }) => {
 					deletePost,
 					setProfileLoading,
 					clearPosts,
+					resetCursor,
+					resetProfile
 				}}>
 				{children}
 			</ProfileContext.Provider>

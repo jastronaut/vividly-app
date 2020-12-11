@@ -19,8 +19,10 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const { setInfoShowing } = useContext(ProfileHeaderContext);
 	const { feedState, markFeedRead } = useContext(FeedContext);
 	const { feed } = feedState;
-	const { getPosts, state, clearPosts } = useContext(ProfileContext);
-	const { posts, isProfileLoading } = state;
+	const { getPosts, state, clearPosts, resetCursor, resetProfile } = useContext(
+		ProfileContext,
+	);
+	const { posts, isProfileLoading, hasMorePosts } = state;
 	const { jwt } = useContext(AuthContext).authState;
 
 	const [user, setUser] = useState(route.params.user);
@@ -36,7 +38,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	useEffect(() => {
 		return () => {
 			setInfoShowing(false);
-			clearPosts();
+			resetProfile();
 		};
 	}, []);
 
@@ -104,6 +106,19 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 		return null;
 	};
 
+	const onEndReached = () => {
+		if (hasMorePosts) {
+			getPosts(route.params.user.id);
+		}
+	};
+	useEffect(() => {
+		console.log(isRefreshing);
+	}, [isRefreshing]);
+
+	useEffect(() => {
+		console.log({ isProfileLoading });
+	}, [isProfileLoading]);
+
 	if (isProfileLoading || isPageLoading) return <ScreenLoadingIndicator />;
 
 	return (
@@ -124,6 +139,7 @@ const UserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 						onPressPost={onPressPost}
 						onLongPressPost={onLongPressPost}
 						postListRef={postListRef}
+						onEndReached={onEndReached}
 					/>
 				)}
 			</ScreenContainer>

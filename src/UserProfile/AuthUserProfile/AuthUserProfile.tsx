@@ -23,7 +23,9 @@ const ACTION_SHEET_OPTIONS = {
 const AuthUserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 	const { setInfoShowing } = useContext(ProfileHeaderContext);
 	const { showActionSheetWithOptions } = useActionSheet();
-	const { state, getPosts, deletePost } = useContext(ProfileContext);
+	const { state, getPosts, deletePost, resetProfile } = useContext(
+		ProfileContext,
+	);
 	const { posts, isProfileLoading } = state;
 	const { jwt, authUser } = useContext(AuthContext).authState;
 	if (!authUser) return null;
@@ -74,6 +76,10 @@ const AuthUserProfileComponent = ({ navigation, route }: UserProfileProps) => {
 
 	useEffect(() => {
 		getPosts(authUser.id);
+
+		return () => {
+			resetProfile();
+		};
 	}, []);
 
 	return (

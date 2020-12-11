@@ -53,7 +53,6 @@ const PostPreview = ({
 		<Pressable
 			onPress={() => onPressPost(post)}
 			onLongPress={() => {
-				console.log('okay...');
 				onLongPressPost(post.id);
 			}}>
 			{({ pressed }) => (
@@ -63,7 +62,9 @@ const PostPreview = ({
 					</View>
 					<PostInteractionContainer>
 						<Pressable
-							onPress={() => toggleLikePost(post.id, post.isLikedByUser)}>
+							onPress={() =>
+								toggleLikePost(post.id, post.isLikedByUser)
+							}>
 							<Heart isLiked={post.isLikedByUser} />
 						</Pressable>
 						<PostMetaText>{post.likeCount}</PostMetaText>

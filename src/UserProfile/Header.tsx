@@ -51,14 +51,14 @@ type Props = {
 };
 
 const Header = (props: Props & BaseUser) => {
-	const { name, username } = props;
+	const { name, username, profilePicture } = props;
 	const { toggleInfoShowing } = useContext(ProfileHeaderContext);
 
 	return (
 		<UserInfoContainer>
 			<LeftSide>
 				<ProfilePictureContainer>
-					<ProfilePicture source={require('../pup.jpg')} />
+					<ProfilePicture source={{ uri: profilePicture }} />
 				</ProfilePictureContainer>
 				<NamesContainer>
 					<Name>{name}</Name>

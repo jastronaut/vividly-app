@@ -11,23 +11,19 @@ import { FeedList, StyledSAV } from './styles';
 import { ScreenContainer } from '../styles';
 import FeedPreviewComponent from './FeedPreviewComponent';
 
-const renderFriendPreview = (
-	feedPreview: FeedPreview,
-	index: number,
-	onPress: Function,
-) => (
-	<FeedPreviewComponent
-		feedPreview={feedPreview}
-		index={index}
-		onPress={onPress}
-	/>
-);
-
 const Home = ({ navigation }: HomeProps) => {
 	const { authState } = useContext(AuthContext);
 	const { feedState, getFeed } = useContext(FeedContext);
 	const { isFeedLoading, feed, authUserFeed } = feedState;
 	const [friendQuery, setFriendQuery] = useState<string>('');
+
+	const filteredFriends = friendQuery.length
+		? feed.filter(
+				(friend) =>
+					friend.user.name.indexOf(friendQuery) > -1 ||
+					friend.user.username.indexOf(friendQuery) > -1,
+		  )
+		: feed;
 
 	useEffect(() => {
 		getFeed();
@@ -63,32 +59,21 @@ const Home = ({ navigation }: HomeProps) => {
 						<Text>Loading</Text>
 					) : (
 						<FlatList<FeedPreview>
-							data={
-								friendQuery.length
-									? feed.filter(
-											(friend) =>
-												friend.user.name.indexOf(
-													friendQuery,
-												) > -1 ||
-												friend.user.username.indexOf(
-													friendQuery,
-												) > -1,
-									  )
-									: feed
-							}
+							data={filteredFriends}
 							renderItem={({
 								item,
 								index,
 							}: {
 								item: FeedPreview;
 								index: number;
-							}) =>
-								renderFriendPreview(
-									item,
-									index,
-									onPressFeedPreview,
-								)
-							}
+							}) => (
+								<FeedPreviewComponent
+									key={item.user.id}
+									feedPreview={item}
+									index={index}
+									onPress={onPressFeedPreview}
+								/>
+							)}
 							keyExtractor={(
 								feedPreview: FeedPreview,
 								index: number,

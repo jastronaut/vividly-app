@@ -56,7 +56,7 @@ const SingleComment = ({ comment, onPress, onLongPress }: Props) => {
 			{({ pressed }) => (
 				<CommentStyled isPressed={pressed}>
 					<Pressable>
-						<Avatar source={require('../../pup.jpg')} />
+						<Avatar source={{ uri: author.profilePicture }} />
 					</Pressable>
 					<CommentContent>
 						<AuthorNames>

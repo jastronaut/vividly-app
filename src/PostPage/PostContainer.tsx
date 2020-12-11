@@ -45,7 +45,7 @@ const PostContainer = ({ user, post }: PostContainerProps) => {
 	return (
 		<PostStyled>
 			<OPHeader>
-				<Avatar source={require('../Home/pup.jpg')} />
+				<Avatar source={{ uri: user.profilePicture }} />
 				<OPNamesContainer>
 					<DisplayName>{user.name}</DisplayName>
 					<Username>@{user.username}</Username>

@@ -1,30 +1,11 @@
 import React, { RefObject } from 'react';
 import styled from 'styled-components/native';
-import { FlatList } from 'react-native';
+import { FlatList, View, Text } from 'react-native';
 
 import { Post } from '../types';
 import PostPreview from './PostPreview';
 
 export const DebugContainer = styled.View``;
-
-const createProfilePost = ({
-	item,
-	index,
-	onPressPost,
-	onLongPressPost,
-}: {
-	item: Post;
-	index: number;
-	onPressPost: Function;
-	onLongPressPost: Function;
-}) =>
-	item ? (
-		<PostPreview
-			post={item}
-			onPressPost={onPressPost}
-			onLongPressPost={onLongPressPost}
-		/>
-	) : null;
 
 type PostsListProps = {
 	postListRef: RefObject<FlatList>;
@@ -33,6 +14,7 @@ type PostsListProps = {
 	onPressPost: Function;
 	onLongPressPost: Function;
 	onRefreshPage: (() => void) | null;
+	onEndReached: () => void;
 };
 
 const PostsList = (props: PostsListProps) => {
@@ -43,6 +25,7 @@ const PostsList = (props: PostsListProps) => {
 		onPressPost,
 		onLongPressPost,
 		onRefreshPage,
+		onEndReached,
 	} = props;
 
 	return (
@@ -52,11 +35,19 @@ const PostsList = (props: PostsListProps) => {
 			inverted={true}
 			refreshing={isRefreshing}
 			data={posts}
-			renderItem={({ item, index }: { item: Post; index: number }) =>
-				createProfilePost({ item, index, onPressPost, onLongPressPost })
-			}
-			keyExtractor={(post: Post) => post.id.toString()}
+			renderItem={({ item, index }: { item: Post; index: number }) => (
+				<PostPreview
+					key={item.id}
+					post={item}
+					onPressPost={onPressPost}
+					onLongPressPost={onLongPressPost}
+				/>
+			)}
+			keyExtractor={(post: Post) => post.id}
 			onRefresh={onRefreshPage}
+			onEndReached={onEndReached}
+			onEndReachedThreshold={0.05}
+			initialNumToRender={30}
 		/>
 	);
 };

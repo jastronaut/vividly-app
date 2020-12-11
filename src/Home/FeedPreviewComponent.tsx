@@ -42,7 +42,7 @@ const FeedPreviewComponent = ({
 	<Pressable onPress={() => onPress(feedPreview.user, index)}>
 		{({ pressed }) => (
 			<PostPreviewContainer isPressed={pressed}>
-				<ProfilePicPreview source={require('./pup.jpg')} />
+				<ProfilePicPreview source={{uri: feedPreview.user.profilePicture}} />
 				<PreviewRight>
 					<PreviewName>{feedPreview.user.name}</PreviewName>
 					{feedPreview.newestPost ? (
